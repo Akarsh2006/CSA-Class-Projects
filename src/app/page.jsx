@@ -7,14 +7,19 @@ import ProjectCard from '@/components/ProjectCard';
 
 export default function Home() {
   const [projects, setProjects] = useState([]);
+  const [user, setUser] = useState(null);
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/api/projects')
-      .then(r => r.ok ? r.json() : [])
-      .then(data => { setProjects(Array.isArray(data) ? data : []); setLoading(false); })
-      .catch(() => setLoading(false));
+    Promise.all([
+      fetch('/api/projects').then(r => r.ok ? r.json() : []),
+      fetch('/api/auth/me').then(r => r.ok ? r.json() : null),
+    ]).then(([projectsData, userData]) => {
+      setProjects(Array.isArray(projectsData) ? projectsData : []);
+      if (userData && userData.user) setUser(userData.user);
+      setLoading(false);
+    }).catch(() => setLoading(false));
   }, []);
 
   const filtered = projects.filter(p =>
@@ -66,7 +71,7 @@ export default function Home() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {filtered.map(project => (
-                <ProjectCard key={project._id} project={project} />
+                <ProjectCard key={project._id} project={project} user={user} />
               ))}
 
               {/* Submit Project Card (6th slot) */}

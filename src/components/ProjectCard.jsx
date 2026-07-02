@@ -2,10 +2,11 @@
 
 import Link from 'next/link';
 
-export default function ProjectCard({ project }) {
+export default function ProjectCard({ project, user }) {
   const date = new Date(project.createdAt).toLocaleDateString('en-GB', {
     day: 'numeric', month: 'long', year: 'numeric',
   });
+  const hasLiked = user && Array.isArray(project.likes) && project.likes.some(l => l.toString() === (user.userId || user._id)?.toString());
   const likesCount = Array.isArray(project.likes) ? project.likes.length : (project.likesCount || 0);
 
   return (
@@ -34,12 +35,11 @@ export default function ProjectCard({ project }) {
             <h3 className="text-headline-md font-headline-md">{project.studentName}</h3>
           </div>
           <button
-            className="bg-white/90 text-black px-6 py-2 rounded-full text-label-md font-label-md font-bold hover:bg-white transition-all card-blur flex items-center gap-1"
+            className={`px-6 py-2 rounded-full text-label-md font-label-md font-bold transition-all card-blur flex items-center gap-1 ${hasLiked ? 'bg-[#ef4444] text-white shadow-lg shadow-red-500/20' : 'bg-white/90 text-black hover:bg-white'}`}
             onClick={e => e.preventDefault()}
           >
-            <span className="material-symbols-outlined text-[16px]">favorite</span>
-            Like
-            <span className="text-label-sm ml-1">{likesCount}</span>
+            <span className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: hasLiked ? '"FILL" 1' : '"FILL" 0' }}>favorite</span>
+            <span className="text-label-sm">{likesCount}</span>
           </button>
         </div>
 
