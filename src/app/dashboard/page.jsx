@@ -16,6 +16,7 @@ export default function Dashboard() {
 
   // Form state (matching Stitch fields)
   const [title, setTitle] = useState('');
+  const [teamName, setTeamName] = useState('');
   const [overview, setOverview] = useState('');
   const [impact, setImpact] = useState('');
   const [demoUrl, setDemoUrl] = useState('');
@@ -94,7 +95,7 @@ export default function Dashboard() {
   };
 
   const resetForm = () => {
-    setTitle(''); setOverview(''); setImpact(''); setDemoUrl(''); setGithubUrl('');
+    setTitle(''); setTeamName(''); setOverview(''); setImpact(''); setDemoUrl(''); setGithubUrl('');
     setCoverImage(null); setGalleryImages([]); setTechTags([]); setTagInput('');
     setContributors([{ name: '', role: '' }]); setCategory('Web Development');
     setIsEditing(false); setEditId(null);
@@ -103,10 +104,14 @@ export default function Dashboard() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (techTags.length === 0) {
+      alert('Please add at least one tech stack or tool.');
+      return;
+    }
     setSubmitting(true);
     try {
       const payload = {
-        title, description: overview, impact, demoUrl, githubUrl,
+        title, teamName, description: overview, impact, demoUrl, githubUrl,
         coverImage, screenshots: galleryImages, techStack: techTags,
         contributors: contributors.filter(c => c.name.trim()), category,
       };
@@ -122,7 +127,7 @@ export default function Dashboard() {
     const res = await fetch(`/api/projects/${id}`);
     if (!res.ok) return;
     const data = await res.json();
-    setTitle(data.title); setOverview(data.description || ''); setImpact(data.impact || '');
+    setTitle(data.title); setTeamName(data.teamName || ''); setOverview(data.description || ''); setImpact(data.impact || '');
     setDemoUrl(data.demoUrl || ''); setGithubUrl(data.githubUrl || '');
     setCoverImage(data.coverImage); setGalleryImages(data.screenshots || []);
     setTechTags(data.techStack || []); setCategory(data.category || 'Web Development');
@@ -170,13 +175,26 @@ export default function Dashboard() {
             {/* Project Title */}
             <div className="space-y-2">
               <label className="text-label-sm font-label-sm text-on-surface uppercase tracking-wider" htmlFor="project-title">
-                Project Title
+                Project Title <span className="text-error">*</span>
               </label>
               <input
                 className="w-full px-4 py-3 bg-surface-container-lowest border border-outline-variant/30 rounded-lg text-body-md transition-all"
                 id="project-title" type="text" required
                 placeholder="e.g. Autonomous Drone Navigation System"
                 value={title} onChange={e => setTitle(e.target.value)}
+              />
+            </div>
+
+            {/* Team Name */}
+            <div className="space-y-2">
+              <label className="text-label-sm font-label-sm text-on-surface uppercase tracking-wider" htmlFor="team-name">
+                Team Name <span className="text-on-surface-variant normal-case">(Optional)</span>
+              </label>
+              <input
+                className="w-full px-4 py-3 bg-surface-container-lowest border border-outline-variant/30 rounded-lg text-body-md transition-all"
+                id="team-name" type="text"
+                placeholder="e.g. Cyber Squad (Leave blank to use your name)"
+                value={teamName} onChange={e => setTeamName(e.target.value)}
               />
             </div>
 
@@ -227,7 +245,7 @@ export default function Dashboard() {
             {/* Project Overview */}
             <div className="space-y-2">
               <label className="text-label-sm font-label-sm text-on-surface uppercase tracking-wider" htmlFor="project-overview">
-                Project Overview
+                Project Overview <span className="text-error">*</span>
               </label>
               <div className="border border-outline-variant/30 rounded-lg overflow-hidden bg-surface-container-lowest">
                 {/* Toolbar */}
@@ -253,7 +271,7 @@ export default function Dashboard() {
             {/* Tech Stack & Tools */}
             <div className="space-y-2">
               <label className="text-label-sm font-label-sm text-on-surface uppercase tracking-wider">
-                Tech Stack &amp; Tools
+                Tech Stack &amp; Tools <span className="text-error">*</span>
               </label>
               <div className="space-y-3">
                 {/* Tags */}
@@ -313,13 +331,14 @@ export default function Dashboard() {
             {/* Project Impact */}
             <div className="space-y-2">
               <label className="text-label-sm font-label-sm text-on-surface uppercase tracking-wider" htmlFor="project-impact">
-                Project Impact
+                Project Impact <span className="text-error">*</span>
               </label>
               <textarea
                 className="w-full px-4 py-3 bg-surface-container-lowest border border-outline-variant/30 rounded-lg text-body-md transition-all"
                 id="project-impact"
                 placeholder="What difference did this project make? Any metrics or specific outcomes?"
                 rows="4"
+                required
                 value={impact}
                 onChange={e => setImpact(e.target.value)}
               />

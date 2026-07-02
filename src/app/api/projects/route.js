@@ -7,7 +7,7 @@ export async function GET() {
   try {
     await dbConnect();
     const projects = await Project.find()
-      .select('title studentName coverImage createdAt likes category userId')
+      .select('title studentName teamName coverImage createdAt likes category userId')
       .sort({ createdAt: -1 })
       .lean();
 
@@ -15,6 +15,7 @@ export async function GET() {
       _id: p._id,
       title: p.title,
       studentName: p.studentName,
+      teamName: p.teamName,
       coverImage: p.coverImage,
       category: p.category,
       createdAt: p.createdAt,
@@ -37,25 +38,26 @@ export async function POST(request) {
 
     const {
       title, description, impact, coverImage, screenshots,
-      category, techStack, contributors, demoUrl, githubUrl
+      category, techStack, contributors, demoUrl, githubUrl, teamName
     } = await request.json();
 
-    if (!title || !description) {
-      return Response.json({ error: 'Title and description are required' }, { status: 400 });
+    if (!title || !description || !impact || !techStack || techStack.length === 0) {
+      return Response.json({ error: 'Title, overview, impact, and tech stack are required' }, { status: 400 });
     }
 
     const project = await Project.create({
       title, description,
-      impact: impact || '',
+      impact,
       coverImage,
       screenshots: screenshots || [],
       category: category || 'Other',
-      techStack: techStack || [],
+      techStack,
       contributors: contributors || [],
       demoUrl: demoUrl || '',
       githubUrl: githubUrl || '',
       userId: user.userId,
       studentName: user.name,
+      teamName: teamName || '',
     });
 
     return Response.json(project, { status: 201 });

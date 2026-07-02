@@ -17,6 +17,7 @@ const ProjectSchema = new mongoose.Schema({
   description: { type: String, required: [true, 'Description is required'] },
   impact: { type: String, default: '' },
   studentName: { type: String, required: [true, 'Student name is required'] },
+  teamName: { type: String, default: '' },
   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   coverImage: { type: String },
   screenshots: { type: [String], default: [] },

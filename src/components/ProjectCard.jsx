@@ -34,7 +34,7 @@ export default function ProjectCard({ project, user }) {
           <div className="flex flex-col gap-1">
             <h3 className="text-headline-md font-headline-md font-bold leading-snug line-clamp-2">{project.title}</h3>
             <p className="text-body-md font-body-md text-white/90">
-              By {project.studentName}
+              By {project.teamName || project.studentName}
             </p>
           </div>
           <button
