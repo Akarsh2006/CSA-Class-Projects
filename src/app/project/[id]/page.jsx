@@ -18,7 +18,7 @@ export default function ProjectDetail() {
       fetch('/api/auth/me').then(r => r.ok ? r.json() : null),
       fetch(`/api/projects/${id}`).then(r => r.ok ? r.json() : null),
     ]).then(([userData, projectData]) => {
-      if (userData) setUser(userData);
+      if (userData && userData.user) setUser(userData.user);
       if (projectData) setProject(projectData);
       setLoading(false);
     }).catch(() => setLoading(false));
@@ -66,7 +66,7 @@ export default function ProjectDetail() {
     </div>
   );
 
-  const hasLiked = user && Array.isArray(project.likes) && project.likes.some(l => l.toString() === user._id?.toString());
+  const hasLiked = user && Array.isArray(project.likes) && project.likes.some(l => l.toString() === (user.userId || user._id)?.toString());
   const likesCount = Array.isArray(project.likes) ? project.likes.length : 0;
   const allImages = [project.coverImage, ...(project.screenshots || [])].filter(Boolean);
 
@@ -112,7 +112,7 @@ export default function ProjectDetail() {
                   className={`px-6 py-3 rounded-xl font-bold hover:scale-105 transition-transform flex items-center gap-2 ${isLiking ? 'opacity-70' : ''} ${hasLiked ? 'bg-[#ef4444] text-white shadow-lg shadow-red-500/20' : 'bg-white text-primary'}`}
                 >
                   <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: hasLiked ? '"FILL" 1' : '"FILL" 0' }}>favorite</span>
-                  <span>Like</span>
+                  <span>{hasLiked ? 'Liked' : 'Like'}</span>
                   <span className="ml-1 opacity-60 font-normal">{likesCount}</span>
                 </button>
               </div>
