@@ -9,7 +9,7 @@ export default function Header() {
   const router = useRouter();
 
   useEffect(() => {
-    fetch('/api/auth/me').then(r => r.ok ? r.json() : null).then(data => { if (data) setUser(data); });
+    fetch('/api/auth/me').then(r => r.ok ? r.json() : null).then(data => { if (data && data.user) setUser(data.user); });
   }, []);
 
   useEffect(() => {
@@ -63,9 +63,6 @@ export default function Header() {
                   <p className="text-label-sm text-on-surface-variant truncate">{user.email}</p>
                 </div>
                 <div className="p-2">
-                  <Link href="/dashboard" className="block px-4 py-2 text-body-md text-on-surface-variant hover:bg-surface-container-low hover:text-primary rounded-lg transition-colors text-left w-full">
-                    Dashboard
-                  </Link>
                   <button onClick={logout} className="block px-4 py-2 text-body-md text-error hover:bg-error-container hover:text-on-error-container rounded-lg transition-colors text-left w-full">
                     Log out
                   </button>
