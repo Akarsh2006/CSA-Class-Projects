@@ -41,15 +41,19 @@ export default function Header() {
         </div>
 
         <div className="flex items-center gap-stack-sm relative">
+          <Link href="/dashboard" className="px-5 py-2.5 bg-primary text-on-primary text-label-md font-label-md font-semibold rounded-xl hover:opacity-90 transition-all shadow-sm flex items-center gap-1">
+            <span className="material-symbols-outlined text-[18px]">add</span>Add Project
+          </Link>
+
           {user ? (
-            <div className="relative group">
+            <div className="relative group ml-2">
               <button
-                className="w-10 h-10 rounded-full bg-primary text-on-primary flex items-center justify-center font-bold text-headline-md focus:outline-none focus:ring-2 focus:ring-primary/20"
+                className="w-10 h-10 rounded-full bg-surface-container-high text-on-surface flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-primary/20 border border-outline-variant/30 overflow-hidden"
                 onClick={(e) => {
                   e.currentTarget.nextElementSibling.classList.toggle('hidden');
                 }}
               >
-                {user.name?.charAt(0).toUpperCase()}
+                <span className="material-symbols-outlined text-on-surface-variant text-[24px]">person</span>
               </button>
               
               {/* Dropdown Menu */}
@@ -70,13 +74,10 @@ export default function Header() {
             </div>
           ) : (
             <>
-              <Link href="/dashboard" className="px-5 py-2.5 bg-primary text-on-primary text-label-md font-label-md font-semibold rounded-xl hover:opacity-90 transition-all shadow-sm flex items-center gap-1">
-                <span className="material-symbols-outlined text-[18px]">add</span>Add Project
-              </Link>
               <Link href="/login" className="px-5 py-2.5 text-label-md font-label-md font-semibold text-on-surface-variant hover:text-primary transition-colors hover:bg-surface-container-low rounded-xl">
                 Log in
               </Link>
-              <Link href="/register" className="px-5 py-2.5 bg-primary text-on-primary text-label-md font-label-md font-semibold rounded-xl hover:opacity-90 transition-all shadow-sm">
+              <Link href="/register" className="px-5 py-2.5 bg-surface-container-high text-on-surface text-label-md font-label-md font-semibold rounded-xl hover:bg-surface-container transition-all shadow-sm border border-outline-variant/30">
                 Register
               </Link>
             </>
