@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Header from '@/components/Header';
 
 export default function Dashboard() {
   const [user, setUser] = useState(null);
@@ -152,19 +153,7 @@ export default function Dashboard() {
   return (
     <div className="bg-surface text-on-surface font-body-md antialiased">
 
-      {/* Header */}
-      <header className="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-md border-b border-outline-variant/30">
-        <div className="flex justify-between items-center h-20 px-margin-x max-w-container-max mx-auto">
-          <div className="flex items-center gap-8">
-            <Link href="/" className="text-headline-md font-headline-md font-bold tracking-tight text-primary">ProjectHub</Link>
-          </div>
-          <div className="flex items-center gap-4">
-            {user && <span className="text-label-md font-label-md text-on-surface-variant hidden sm:block">Hi, {user.name}</span>}
-            <button onClick={logout} className="px-5 py-2 text-label-md font-label-md text-on-surface-variant hover:bg-surface-container-low transition-all duration-200 rounded-xl">Log out</button>
-            <Link href="/" className="px-6 py-2.5 bg-primary text-on-primary text-label-md font-label-md rounded-xl hover:opacity-90 transition-all">Home</Link>
-          </div>
-        </div>
-      </header>
+      <Header />
 
       <main className="pt-32 pb-stack-xl px-margin-x max-w-[800px] mx-auto">
         {/* Page Title */}
@@ -224,12 +213,12 @@ export default function Dashboard() {
                   </div>
                 ) : (
                   <>
-                    <div className="relative z-10 text-center p-6">
+                    <div className="relative text-center p-6 pointer-events-none">
                       <span className="material-symbols-outlined text-4xl text-secondary mb-2 block">upload_file</span>
                       <p className="text-body-md font-semibold text-on-surface">Click or drag to upload cover image</p>
                       <p className="text-label-sm text-on-surface-variant mt-1">Recommended size: 1920x1080px (JPG, PNG)</p>
                     </div>
-                    <input className="absolute inset-0 opacity-0 cursor-pointer" type="file" accept="image/*" onChange={handleCoverChange} ref={coverRef} />
+                    <input className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" type="file" accept="image/*" onChange={handleCoverChange} ref={coverRef} />
                   </>
                 )}
               </div>

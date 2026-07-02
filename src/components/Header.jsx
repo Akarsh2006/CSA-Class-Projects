@@ -40,18 +40,34 @@ export default function Header() {
           </Link>
         </div>
 
-        {/* Right: auth buttons */}
-        <div className="flex items-center gap-stack-sm">
+        <div className="flex items-center gap-stack-sm relative">
           {user ? (
-            <>
-              <span className="text-label-md font-label-md text-on-surface-variant hidden sm:block">Hi, {user.name}</span>
-              <Link href="/dashboard" className="px-5 py-2.5 text-label-md font-label-md font-semibold text-on-surface-variant hover:text-primary transition-colors hover:bg-surface-container-low rounded-xl">
-                Dashboard
-              </Link>
-              <button onClick={logout} className="px-5 py-2.5 bg-primary text-on-primary text-label-md font-label-md font-semibold rounded-xl hover:opacity-90 transition-all shadow-sm">
-                Log out
+            <div className="relative group">
+              <button
+                className="w-10 h-10 rounded-full bg-primary text-on-primary flex items-center justify-center font-bold text-headline-md focus:outline-none focus:ring-2 focus:ring-primary/20"
+                onClick={(e) => {
+                  e.currentTarget.nextElementSibling.classList.toggle('hidden');
+                }}
+              >
+                {user.name?.charAt(0).toUpperCase()}
               </button>
-            </>
+              
+              {/* Dropdown Menu */}
+              <div className="hidden absolute right-0 mt-2 w-56 bg-surface-container-lowest border border-outline-variant/30 rounded-xl shadow-lg overflow-hidden z-50">
+                <div className="px-4 py-3 border-b border-outline-variant/20 bg-surface-container-low/50">
+                  <p className="text-body-md font-semibold text-on-surface truncate">{user.name}</p>
+                  <p className="text-label-sm text-on-surface-variant truncate">{user.email}</p>
+                </div>
+                <div className="p-2">
+                  <Link href="/dashboard" className="block px-4 py-2 text-body-md text-on-surface-variant hover:bg-surface-container-low hover:text-primary rounded-lg transition-colors text-left w-full">
+                    Dashboard
+                  </Link>
+                  <button onClick={logout} className="block px-4 py-2 text-body-md text-error hover:bg-error-container hover:text-on-error-container rounded-lg transition-colors text-left w-full">
+                    Log out
+                  </button>
+                </div>
+              </div>
+            </div>
           ) : (
             <>
               <Link href="/dashboard" className="px-5 py-2.5 bg-primary text-on-primary text-label-md font-label-md font-semibold rounded-xl hover:opacity-90 transition-all shadow-sm flex items-center gap-1">
