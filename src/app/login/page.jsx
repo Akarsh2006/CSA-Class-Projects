@@ -3,12 +3,12 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import Header from '@/components/Header';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPw, setShowPw] = useState(false);
+  const [remember, setRemember] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -35,86 +35,91 @@ export default function Login() {
   };
 
   return (
-    <main style={{ background: 'var(--surface-container-low)', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      {/* Minimal header */}
-      <header className="topnav" style={{ position: 'fixed' }}>
-        <div className="topnav-inner">
-          <Link href="/" className="topnav-logo">ProjectHub</Link>
-        </div>
+    <body className="bg-surface-container-low min-h-screen flex flex-col font-body-md text-on-surface selection:bg-primary/10 selection:text-primary">
+
+      {/* Header */}
+      <header className="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-margin-x h-20 max-w-container-max mx-auto bg-surface/80 backdrop-blur-md transition-all duration-300">
+        <Link href="/" className="font-headline-md text-headline-md font-bold text-primary">ProjectHub</Link>
+        <nav className="hidden md:flex items-center space-x-gutter" />
       </header>
 
-      <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', paddingTop: '96px', paddingBottom: '64px', padding: '96px 32px 64px' }}>
-        {/* Login Card */}
-        <div style={{
-          width: '100%', maxWidth: '440px',
-          background: 'var(--surface-container-lowest)',
-          borderRadius: '12px', padding: '32px',
-          border: '1px solid rgba(0,0,0,0.05)',
-          boxShadow: '0 2px 12px rgba(0,0,0,0.04)'
-        }}>
+      {/* Main */}
+      <main className="flex-grow flex items-center justify-center pt-24 pb-stack-xl px-margin-x">
+        <div className="w-full max-w-md bg-surface-container-lowest rounded-xl p-stack-lg border border-primary/5 transition-all duration-500">
+
           {/* Header */}
-          <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-            <h1 className="font-headline-lg" style={{ color: 'var(--primary)', marginBottom: '8px' }}>Log In</h1>
-            <p className="font-body-md" style={{ color: 'var(--on-surface-variant)' }}>Welcome back to ProjectHub</p>
+          <div className="text-center mb-stack-lg">
+            <h1 className="font-headline-lg text-headline-lg text-primary mb-2">Log In</h1>
+            <p className="font-body-md text-on-surface-variant">Welcome back to ProjectHub</p>
           </div>
 
-          {error && <div className="alert-error">{error}</div>}
+          {error && (
+            <div className="mb-stack-md p-3 rounded-xl bg-error-container text-on-error-container text-body-md font-body-md">
+              {error}
+            </div>
+          )}
 
-          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          {/* Form */}
+          <form className="space-y-stack-md" onSubmit={handleSubmit}>
+
             {/* Email */}
-            <div>
-              <label className="form-label" htmlFor="email">EMAIL ADDRESS</label>
+            <div className="space-y-1">
+              <label className="font-label-sm text-label-sm text-on-surface-variant block ml-1" htmlFor="email">
+                EMAIL ADDRESS
+              </label>
               <input
+                className="w-full px-4 py-3 rounded-xl border border-outline-variant bg-surface-bright font-body-md text-on-surface input-academic transition-all"
                 id="email" type="email" required
-                className="form-input"
                 placeholder="name@university.edu"
                 value={email} onChange={e => setEmail(e.target.value)}
-                style={{ marginTop: '4px' }}
               />
             </div>
 
             {/* Password */}
-            <div>
-              <label className="form-label" htmlFor="password">PASSWORD</label>
-              <div className="form-input-icon" style={{ marginTop: '4px' }}>
+            <div className="space-y-1">
+              <div className="flex justify-between items-center">
+                <label className="font-label-sm text-label-sm text-on-surface-variant block ml-1" htmlFor="password">
+                  PASSWORD
+                </label>
+              </div>
+              <div className="relative">
                 <input
+                  className="w-full px-4 py-3 rounded-xl border border-outline-variant bg-surface-bright font-body-md text-on-surface input-academic transition-all"
                   id="password" type={showPw ? 'text' : 'password'} required
-                  className="form-input"
                   placeholder="••••••••"
                   value={password} onChange={e => setPassword(e.target.value)}
-                  style={{ paddingRight: '48px' }}
                 />
                 <button
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-primary transition-colors"
                   type="button"
                   onClick={() => setShowPw(!showPw)}
-                  style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: 'var(--on-surface-variant)', cursor: 'pointer', marginTop: '4px' }}
                 >
-                  <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>{showPw ? 'visibility_off' : 'visibility'}</span>
+                  <span className="material-symbols-outlined text-[20px]">{showPw ? 'visibility_off' : 'visibility'}</span>
                 </button>
               </div>
             </div>
 
             {/* Remember me */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <input type="checkbox" id="remember" style={{ width: '16px', height: '16px', cursor: 'pointer', accentColor: 'var(--primary)' }} />
-              <label htmlFor="remember" className="font-body-md" style={{ color: 'var(--on-surface-variant)', cursor: 'pointer' }}>Remember me</label>
+            <div className="flex items-center space-x-2 py-1">
+              <input
+                className="w-4 h-4 rounded-md border-outline-variant text-primary focus:ring-primary/20 cursor-pointer"
+                id="remember" type="checkbox"
+                checked={remember} onChange={e => setRemember(e.target.checked)}
+              />
+              <label className="font-body-md text-on-surface-variant cursor-pointer select-none" htmlFor="remember">
+                Remember me
+              </label>
             </div>
 
             {/* Submit */}
             <button
-              type="submit" disabled={loading}
-              style={{
-                width: '100%', padding: '16px', marginTop: '4px',
-                background: 'var(--primary)', color: 'var(--on-primary)',
-                border: 'none', borderRadius: '12px', cursor: 'pointer',
-                fontFamily: 'var(--font-headline)', fontSize: '24px', fontWeight: 600,
-                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
-                boxShadow: '0 4px 16px rgba(0,0,0,0.05)',
-                transition: 'opacity 0.2s, transform 0.15s',
-                opacity: loading ? 0.7 : 1
-              }}
+              className="w-full bg-primary text-on-primary font-headline-md text-headline-md py-4 rounded-xl hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center space-x-2 shadow-lg shadow-primary/5"
+              type="submit"
+              disabled={loading}
             >
-              {loading ? <span className="loading-spinner" style={{ borderTopColor: '#fff' }} /> : (
+              {loading ? (
+                <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              ) : (
                 <>
                   <span>Log In</span>
                   <span className="material-symbols-outlined">login</span>
@@ -123,21 +128,25 @@ export default function Login() {
             </button>
           </form>
 
-          {/* Toggle link */}
-          <div style={{ marginTop: '32px', textAlign: 'center', borderTop: '1px solid var(--surface-container-high)', paddingTop: '16px' }}>
-            <p className="font-body-md" style={{ color: 'var(--on-surface-variant)' }}>
-              Don't have an account?{' '}
-              <Link href="/register" style={{ color: 'var(--primary)', fontWeight: 600, textDecoration: 'underline', textUnderlineOffset: '3px' }}>Register</Link>
+          {/* Register link */}
+          <div className="mt-stack-lg text-center border-t border-surface-container-high pt-stack-md">
+            <p className="font-body-md text-on-surface-variant">
+              Don&apos;t have an account?{' '}
+              <Link href="/register" className="text-primary font-semibold hover:underline decoration-2 underline-offset-4 transition-all">
+                Register
+              </Link>
             </p>
           </div>
         </div>
-      </div>
+      </main>
 
       {/* Footer */}
-      <footer style={{ padding: '24px 32px', borderTop: '1px solid var(--surface-container-high)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--surface)', maxWidth: 'var(--container-max)', margin: '0 auto', width: '100%' }}>
-        <span className="font-label-md" style={{ color: 'var(--on-surface-variant)' }}>© 2024-28 CS-A. All rights reserved.</span>
-        <a href="#" className="font-body-md" style={{ color: 'var(--on-surface-variant)' }}>Contact Support</a>
+      <footer className="w-full py-stack-lg px-margin-x flex flex-col md:flex-row justify-between items-center max-w-container-max mx-auto bg-surface border-t border-surface-container-high">
+        <div className="font-label-md text-label-md text-on-surface-variant mb-4 md:mb-0">© 2024-28 CS-A. All rights reserved.</div>
+        <div className="flex space-x-gutter">
+          <Link href="#" className="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-all duration-200">Contact Support</Link>
+        </div>
       </footer>
-    </main>
+    </body>
   );
 }

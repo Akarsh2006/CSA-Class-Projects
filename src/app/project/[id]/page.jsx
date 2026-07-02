@@ -6,28 +6,26 @@ import Link from 'next/link';
 import Header from '@/components/Header';
 
 export default function ProjectDetail() {
-  const params = useParams();
-  const id = params.id;
+  const { id } = useParams();
   const [project, setProject] = useState(null);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [commentText, setCommentText] = useState('');
   const [isLiking, setIsLiking] = useState(false);
-  const [activeImg, setActiveImg] = useState(null);
 
   useEffect(() => {
     Promise.all([
       fetch('/api/auth/me').then(r => r.ok ? r.json() : null),
-      fetch(`/api/projects/${id}`).then(r => r.ok ? r.json() : null)
+      fetch(`/api/projects/${id}`).then(r => r.ok ? r.json() : null),
     ]).then(([userData, projectData]) => {
       if (userData) setUser(userData);
-      if (projectData) { setProject(projectData); setActiveImg(projectData.coverImage); }
+      if (projectData) setProject(projectData);
       setLoading(false);
     }).catch(() => setLoading(false));
   }, [id]);
 
   const refetch = () =>
-    fetch(`/api/projects/${id}`).then(r => r.ok ? r.json() : null).then(data => { if (data) setProject(data); });
+    fetch(`/api/projects/${id}`).then(r => r.ok ? r.json() : null).then(d => { if (d) setProject(d); });
 
   const handleLike = async () => {
     if (!user) return alert('Please log in to like projects.');
@@ -43,162 +41,202 @@ export default function ProjectDetail() {
     await fetch(`/api/projects/${id}/comments`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text: commentText })
+      body: JSON.stringify({ text: commentText }),
     });
     setCommentText('');
     await refetch();
   };
 
   if (loading) return (
-    <main style={{ background: 'var(--background)', minHeight: '100vh' }}>
+    <body className="bg-background text-on-background font-body-md">
       <Header />
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
-        <div className="loading-spinner" />
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="w-8 h-8 border-2 border-primary/20 border-t-primary rounded-full animate-spin" />
       </div>
-    </main>
+    </body>
   );
 
   if (!project) return (
-    <main style={{ background: 'var(--background)', minHeight: '100vh' }}>
+    <body className="bg-background text-on-background font-body-md">
       <Header />
-      <div style={{ textAlign: 'center', padding: '120px 32px', color: 'var(--on-surface-variant)' }}>
-        <h2 className="font-headline-lg">Project not found</h2>
-        <Link href="/" className="btn-primary" style={{ marginTop: '24px', display: 'inline-flex' }}>← Back to Home</Link>
+      <div className="text-center pt-40 text-on-surface-variant">
+        <h2 className="text-headline-lg font-headline-lg mb-6">Project not found</h2>
+        <Link href="/" className="px-6 py-3 bg-primary text-on-primary rounded-xl font-label-md font-semibold hover:opacity-90 transition-all">← Back to Home</Link>
       </div>
-    </main>
+    </body>
   );
 
-  const hasLiked = user && Array.isArray(project.likes) && project.likes.includes(user._id);
+  const hasLiked = user && Array.isArray(project.likes) && project.likes.some(l => l.toString() === user._id?.toString());
   const likesCount = Array.isArray(project.likes) ? project.likes.length : 0;
   const allImages = [project.coverImage, ...(project.screenshots || [])].filter(Boolean);
 
   return (
-    <main style={{ background: 'var(--background)', minHeight: '100vh' }}>
-      <Header />
+    <body className="bg-background text-on-background font-body-md">
+      {/* TopNavBar */}
+      <header className="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-md border-b border-outline-variant/30 transition-all duration-300">
+        <div className="flex justify-between items-center h-20 px-margin-x max-w-container-max mx-auto">
+          <div className="flex items-center gap-8">
+            <Link href="/" className="text-headline-md font-headline-md font-bold tracking-tight text-primary">ProjectHub</Link>
+          </div>
+          <div className="flex items-center gap-4">
+            {user ? (
+              <>
+                <span className="text-label-md font-label-md text-on-surface-variant hidden sm:block">Hi, {user.name}</span>
+                <Link href="/dashboard" className="px-5 py-2.5 rounded-xl text-on-surface-variant hover:bg-surface-container-low transition-all duration-200 text-label-md font-label-md">Dashboard</Link>
+              </>
+            ) : (
+              <>
+                <Link href="/login" className="px-5 py-2.5 rounded-xl text-on-surface-variant hover:bg-surface-container-low transition-all duration-200 text-label-md font-label-md">Log in</Link>
+                <Link href="/register" className="px-5 py-2.5 rounded-xl bg-primary text-on-primary hover:opacity-90 transition-all duration-200 text-label-md font-label-md">Register</Link>
+              </>
+            )}
+          </div>
+        </div>
+      </header>
 
-      <div className="container" style={{ paddingTop: '104px', paddingBottom: '64px' }}>
-        {/* === HERO: 12-col layout === */}
-        <section style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '24px', marginBottom: '64px', animation: 'fadeIn 0.7s ease forwards' }}>
-          <style>{`@keyframes fadeIn { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:none; } }`}</style>
+      <main className="pt-24 pb-stack-xl px-margin-x max-w-container-max mx-auto">
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '24px' }}>
-            {/* Left: tall hero card */}
-            <div style={{ position: 'relative', borderRadius: '32px', overflow: 'hidden', minHeight: '500px', boxShadow: '0 8px 40px rgba(0,0,0,0.15)' }}>
-              {(activeImg || project.coverImage) ? (
-                <img src={activeImg || project.coverImage} alt={project.title} style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', inset: 0, transition: 'opacity 0.4s' }} />
-              ) : (
-                <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg, #dae2fd, #bec6e0)' }} />
-              )}
-              <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.2) 50%, transparent 100%)' }} />
-              <div style={{ position: 'absolute', bottom: 0, left: 0, padding: '40px', width: '100%' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
-                  <span style={{ background: 'rgba(255,255,255,0.2)', backdropFilter: 'blur(12px)', padding: '4px 12px', borderRadius: '9999px', color: 'white', fontFamily: 'var(--font-label)', fontSize: '12px' }}>
-                    {new Date(project.createdAt).getFullYear()}
+        {/* === HERO: 12-col grid === */}
+        <section className="grid grid-cols-1 lg:grid-cols-12 gap-gutter mb-stack-xl animate-in fade-in slide-in-from-bottom-4 duration-700">
+
+          {/* Left: tall portrait card — col-span-5 */}
+          <div className="lg:col-span-5 relative group overflow-hidden rounded-[2rem] h-[600px] lg:h-[700px] shadow-2xl">
+            {project.coverImage ? (
+              <img
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                src={project.coverImage}
+                alt={project.title}
+              />
+            ) : (
+              <div className="w-full h-full bg-surface-container-highest flex items-center justify-center text-7xl opacity-30">📁</div>
+            )}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+            <div className="absolute bottom-0 left-0 p-10 w-full">
+              <div className="flex items-center gap-2 mb-4">
+                <span className="bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-white text-label-sm font-label-sm">
+                  {new Date(project.createdAt).getFullYear()}
+                </span>
+                {project.category && (
+                  <span className="bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-white text-label-sm font-label-sm">
+                    {project.category}
                   </span>
-                  {project.category && (
-                    <span style={{ background: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(12px)', padding: '4px 12px', borderRadius: '9999px', color: 'white', fontFamily: 'var(--font-label)', fontSize: '12px' }}>
-                      {project.category}
-                    </span>
-                  )}
-                </div>
-                <h1 style={{ color: 'white', fontFamily: 'var(--font-headline)', fontSize: 'clamp(20px, 3vw, 32px)', fontWeight: 700, lineHeight: 1.3, marginBottom: '8px' }}>{project.title}</h1>
-                <p style={{ color: 'rgba(255,255,255,0.8)', fontFamily: 'var(--font-body)', fontSize: '16px', marginBottom: '24px', maxWidth: '480px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{project.description}</p>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '24px', borderTop: '1px solid rgba(255,255,255,0.2)' }}>
-                  <div style={{ color: 'rgba(255,255,255,0.8)', fontFamily: 'var(--font-label)', fontSize: '14px' }}>By {project.studentName}</div>
-                  <button
-                    onClick={handleLike} disabled={isLiking}
-                    style={{
-                      background: 'white', color: 'var(--primary)', border: 'none', borderRadius: '12px',
-                      padding: '12px 24px', fontWeight: 700, cursor: 'pointer',
-                      display: 'flex', alignItems: 'center', gap: '8px',
-                      transition: 'transform 0.2s',
-                      transform: isLiking ? 'scale(0.95)' : 'scale(1)'
-                    }}
-                  >
-                    <span className="material-symbols-outlined" style={{ fontSize: '20px', fontVariationSettings: hasLiked ? '"FILL" 1' : '"FILL" 0', color: hasLiked ? '#ef4444' : 'inherit' }}>favorite</span>
-                    <span>Like</span>
-                    <span style={{ opacity: 0.6, fontWeight: 400 }}>{likesCount}</span>
-                  </button>
-                </div>
+                )}
+              </div>
+              <h1 className="text-white font-display text-headline-lg leading-tight mb-2">{project.title}</h1>
+              <p className="text-white/80 text-body-md mb-6 max-w-sm line-clamp-2">{project.description}</p>
+              <div className="flex items-center justify-between pt-6 border-t border-white/20">
+                <span className="text-white/80 text-label-md font-label-md">By {project.studentName}</span>
+                <button
+                  onClick={handleLike}
+                  disabled={isLiking}
+                  className={`bg-white text-primary px-6 py-3 rounded-xl font-bold hover:scale-105 transition-transform flex items-center gap-2 ${isLiking ? 'opacity-70' : ''}`}
+                >
+                  <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: hasLiked ? '"FILL" 1' : '"FILL" 0', color: hasLiked ? '#ef4444' : 'inherit' }}>favorite</span>
+                  <span>Like</span>
+                  <span className="ml-1 opacity-60 font-normal">{likesCount}</span>
+                </button>
               </div>
             </div>
+          </div>
 
-            {/* Right: info panel */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-              {/* Tech Stack */}
-              {project.techStack && project.techStack.length > 0 && (
-                <div>
-                  <h2 className="font-headline-md" style={{ marginBottom: '12px' }}>Tech Stack &amp; Tools</h2>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                    {project.techStack.map((tech, i) => (
-                      <span key={i} className="chip">{tech}</span>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Project Overview */}
-              <div className="glass-card" style={{ padding: '32px', borderRadius: '24px' }}>
-                <h3 className="font-headline-md" style={{ marginBottom: '16px' }}>Project Overview</h3>
-                <div style={{ color: 'var(--on-surface-variant)' }}>
-                  {project.description.split('\n').map((para, i) => (
-                    <p key={i} className="font-body-md" style={{ marginBottom: '12px', lineHeight: 1.7 }}>{para}</p>
+          {/* Right: info — col-span-7 */}
+          <div className="lg:col-span-7 flex flex-col justify-center space-y-stack-lg">
+            {/* Tech Stack */}
+            {project.techStack && project.techStack.length > 0 && (
+              <div className="space-y-stack-md">
+                <h2 className="text-headline-md font-headline-md">Tech Stack &amp; Tools</h2>
+                <div className="flex flex-wrap gap-2">
+                  {project.techStack.map((tech, i) => (
+                    <span key={i} className="px-4 py-2 bg-surface-container rounded-lg font-label-md text-label-md text-on-surface-variant border border-outline-variant/30">
+                      {tech}
+                    </span>
                   ))}
                 </div>
               </div>
+            )}
 
-              {/* Action Buttons */}
-              <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
-                {project.demoUrl && (
-                  <a href={project.demoUrl} target="_blank" rel="noopener noreferrer" className="btn-primary" style={{ flex: 1, justifyContent: 'center', padding: '16px 24px', fontFamily: 'var(--font-body)', fontWeight: 700, fontSize: '16px' }}>
-                    <span className="material-symbols-outlined">launch</span>
-                    View Live Demo
-                  </a>
-                )}
-                {project.githubUrl && (
-                  <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" className="btn-outline" style={{ flex: 1, justifyContent: 'center', padding: '16px 24px', fontWeight: 700, fontSize: '16px' }}>
-                    <span className="material-symbols-outlined">code</span>
-                    GitHub Repository
-                  </a>
-                )}
+            {/* Project Overview glass card */}
+            <div className="p-8 glass-card rounded-3xl">
+              <h3 className="text-headline-md font-headline-md mb-4">Project Overview</h3>
+              <div className="prose prose-slate max-w-none text-body-md text-on-surface-variant space-y-4">
+                {project.description.split('\n').map((para, i) => (
+                  <p key={i}>{para}</p>
+                ))}
               </div>
+            </div>
+
+            {/* CTA Buttons */}
+            <div className="flex flex-col sm:flex-row gap-4 pt-4">
+              {project.demoUrl && (
+                <a
+                  href={project.demoUrl} target="_blank" rel="noopener noreferrer"
+                  className="flex-1 flex items-center justify-center gap-2 px-8 py-4 bg-primary text-on-primary rounded-xl font-bold hover:opacity-90 transition-all"
+                >
+                  <span className="material-symbols-outlined">launch</span>
+                  View Live Demo
+                </a>
+              )}
+              {project.githubUrl && (
+                <a
+                  href={project.githubUrl} target="_blank" rel="noopener noreferrer"
+                  className="flex-1 flex items-center justify-center gap-2 px-8 py-4 bg-surface-container-high text-primary rounded-xl font-bold hover:bg-outline-variant/20 transition-all border border-outline-variant/30"
+                >
+                  <span className="material-symbols-outlined">code</span>
+                  GitHub Repository
+                </a>
+              )}
             </div>
           </div>
         </section>
 
-        {/* === IMAGE GALLERY === */}
-        {allImages.length > 0 && (
-          <section style={{ marginBottom: '64px' }}>
-            <h2 className="font-headline-lg" style={{ marginBottom: '24px' }}>Gallery</h2>
-            <div style={{ position: 'relative' }}>
-              {/* Scroll arrows */}
-              <button
-                onClick={() => document.getElementById('gallery-scroll').scrollBy({ left: -400, behavior: 'smooth' })}
-                style={{ position: 'absolute', left: '8px', top: '50%', transform: 'translateY(-50%)', zIndex: 10, width: '48px', height: '48px', background: 'rgba(255,255,255,0.9)', backdropFilter: 'blur(8px)', border: 'none', borderRadius: '50%', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 12px rgba(0,0,0,0.1)', color: 'var(--primary)' }}
-              >
-                <span className="material-symbols-outlined">chevron_left</span>
-              </button>
-              <button
-                onClick={() => document.getElementById('gallery-scroll').scrollBy({ left: 400, behavior: 'smooth' })}
-                style={{ position: 'absolute', right: '8px', top: '50%', transform: 'translateY(-50%)', zIndex: 10, width: '48px', height: '48px', background: 'rgba(255,255,255,0.9)', backdropFilter: 'blur(8px)', border: 'none', borderRadius: '50%', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 12px rgba(0,0,0,0.1)', color: 'var(--primary)' }}
-              >
-                <span className="material-symbols-outlined">chevron_right</span>
-              </button>
+        {/* === PROJECT IMPACT === */}
+        {project.impact && (
+          <section className="mb-stack-xl">
+            <div className="max-w-container-max mx-auto space-y-stack-lg">
+              <div className="space-y-stack-md text-left">
+                <h2 className="text-headline-lg font-headline-lg">Project Impact</h2>
+                <div className="prose prose-slate max-w-none text-body-lg text-on-surface-variant">
+                  <p>{project.impact}</p>
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
 
-              <div id="gallery-scroll" className="no-scrollbar" style={{ display: 'flex', gap: '24px', overflowX: 'auto', scrollSnapType: 'x mandatory', borderRadius: '24px' }}>
-                {allImages.map((src, i) => (
-                  <div key={i} style={{ flex: 'none', width: '70%', scrollSnapAlign: 'start' }}>
-                    <div style={{ background: 'var(--surface-container)', borderRadius: '24px', padding: '24px' }}>
-                      <img
-                        src={src} alt={`Screenshot ${i + 1}`}
-                        onClick={() => setActiveImg(src)}
-                        style={{ width: '100%', aspectRatio: '16/9', objectFit: 'cover', borderRadius: '16px', boxShadow: '0 2px 8px rgba(0,0,0,0.08)', cursor: 'pointer', transition: 'transform 0.2s' }}
-                        onMouseOver={e => e.target.style.transform = 'scale(1.01)'}
-                        onMouseOut={e => e.target.style.transform = 'none'}
-                      />
+        {/* === IMAGE CAROUSEL === */}
+        {allImages.length > 0 && (
+          <section className="mb-stack-xl">
+            <div className="max-w-container-max mx-auto space-y-stack-lg">
+              <div className="relative group">
+                {/* Nav arrows */}
+                <div className="flex items-center justify-between absolute w-full top-1/2 -translate-y-1/2 z-10 pointer-events-none px-4">
+                  <button
+                    className="pointer-events-auto w-12 h-12 bg-white/90 backdrop-blur shadow-lg rounded-full flex items-center justify-center text-primary hover:bg-primary hover:text-on-primary transition-all duration-300"
+                    onClick={() => document.getElementById('overview-carousel').scrollBy({ left: -400, behavior: 'smooth' })}
+                  >
+                    <span className="material-symbols-outlined">chevron_left</span>
+                  </button>
+                  <button
+                    className="pointer-events-auto w-12 h-12 bg-white/90 backdrop-blur shadow-lg rounded-full flex items-center justify-center text-primary hover:bg-primary hover:text-on-primary transition-all duration-300"
+                    onClick={() => document.getElementById('overview-carousel').scrollBy({ left: 400, behavior: 'smooth' })}
+                  >
+                    <span className="material-symbols-outlined">chevron_right</span>
+                  </button>
+                </div>
+
+                <div id="overview-carousel" className="flex gap-gutter overflow-x-auto no-scrollbar snap-x snap-mandatory scroll-smooth rounded-3xl">
+                  {allImages.map((src, i) => (
+                    <div key={i} className="flex-none w-full md:w-[70%] snap-start">
+                      <div className="bg-surface-container rounded-3xl p-6 h-full">
+                        <img
+                          className="w-full aspect-video object-cover rounded-2xl shadow-sm"
+                          src={src}
+                          alt={`Screenshot ${i + 1}`}
+                        />
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
             </div>
           </section>
@@ -206,79 +244,89 @@ export default function ProjectDetail() {
 
         {/* === CONTRIBUTORS === */}
         {project.contributors && project.contributors.length > 0 && (
-          <section style={{ marginBottom: '64px' }}>
-            <div style={{ textAlign: 'center', marginBottom: '48px' }}>
-              <h2 className="font-headline-lg">Core Contributors</h2>
+          <section className="mb-stack-xl rounded-[2.5rem] p-stack-lg border-outline-variant/10">
+            <div className="max-w-4xl mx-auto text-center mb-12">
+              <h2 className="text-headline-lg font-headline-lg mb-4">Core Contributors</h2>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '32px', maxWidth: '800px', margin: '0 auto', textAlign: 'center' }}>
-              {project.contributors.map((c, i) => (
-                <div key={i}>
-                  <h4 className="font-headline-md" style={{ color: 'var(--on-surface)' }}>{c.name}</h4>
-                  <p className="font-label-md" style={{ color: 'var(--secondary)' }}>{c.role}</p>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 max-w-4xl mx-auto text-center">
+              {project.contributors.filter(c => c.name).map((c, i) => (
+                <div key={i} className="space-y-1">
+                  <h4 className="text-headline-md font-headline-md text-on-surface">{c.name}</h4>
+                  <p className="text-label-md font-label-md text-secondary">{c.role}</p>
                 </div>
               ))}
             </div>
           </section>
         )}
 
-        {/* === COMMENTS === */}
-        <section>
-          <div style={{ background: 'var(--surface-container-lowest)', borderRadius: '24px', padding: '40px', border: '1px solid rgba(0,0,0,0.04)' }}>
-            <h2 className="font-headline-lg" style={{ marginBottom: '24px' }}>Discussion ({project.comments?.length || 0})</h2>
+        {/* === COMMENTS / DISCUSSION === */}
+        <section className="max-w-4xl mx-auto">
+          <div className="bg-surface-container-lowest rounded-3xl p-10 border border-primary/5">
+            <h2 className="text-headline-lg font-headline-lg mb-6">
+              Discussion ({project.comments?.length || 0})
+            </h2>
 
             {user ? (
-              <form onSubmit={handleComment} style={{ marginBottom: '40px' }}>
+              <form onSubmit={handleComment} className="mb-10">
                 <textarea
-                  className="form-input"
+                  className="w-full px-4 py-3 rounded-xl border border-outline-variant bg-surface-bright font-body-md text-on-surface input-academic transition-all resize-none"
                   rows="3"
                   placeholder="Share your thoughts on this project..."
                   value={commentText}
                   onChange={e => setCommentText(e.target.value)}
                   required
                 />
-                <div style={{ textAlign: 'right', marginTop: '12px' }}>
-                  <button type="submit" className="btn-primary">Post Comment</button>
+                <div className="text-right mt-3">
+                  <button type="submit" className="px-6 py-2.5 bg-primary text-on-primary text-label-md font-label-md font-semibold rounded-xl hover:opacity-90 transition-all">
+                    Post Comment
+                  </button>
                 </div>
               </form>
             ) : (
-              <div style={{ padding: '20px', background: 'var(--surface-container-low)', borderRadius: '12px', textAlign: 'center', marginBottom: '32px' }}>
-                <p className="font-body-md" style={{ color: 'var(--on-surface-variant)' }}>
-                  <Link href="/login" style={{ color: 'var(--primary)', fontWeight: 600 }}>Log in</Link> to leave a comment.
+              <div className="mb-8 p-4 bg-surface-container-low rounded-xl text-center">
+                <p className="font-body-md text-on-surface-variant">
+                  <Link href="/login" className="text-primary font-semibold hover:underline">Log in</Link> to leave a comment.
                 </p>
               </div>
             )}
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+            <div className="space-y-6">
               {project.comments?.length ? project.comments.map((c, i) => (
-                <div key={i} style={{ display: 'flex', gap: '16px', paddingBottom: '24px', borderBottom: '1px solid var(--surface-container-high)' }}>
-                  <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'var(--surface-container-highest)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-headline)', fontWeight: 700, flexShrink: 0 }}>
+                <div key={i} className="flex gap-4 pb-6 border-b border-surface-container-high last:border-0">
+                  <div className="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center font-headline-md font-bold flex-shrink-0">
                     {c.userName.charAt(0).toUpperCase()}
                   </div>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ display: 'flex', alignItems: 'baseline', gap: '10px', marginBottom: '8px' }}>
-                      <span className="font-body-md" style={{ fontWeight: 600 }}>{c.userName}</span>
-                      <span className="font-label-sm" style={{ color: 'var(--on-surface-variant)' }}>{new Date(c.createdAt).toLocaleDateString()}</span>
+                  <div className="flex-1">
+                    <div className="flex items-baseline gap-2 mb-2">
+                      <span className="font-body-md font-semibold text-on-surface">{c.userName}</span>
+                      <span className="font-label-sm text-on-surface-variant">{new Date(c.createdAt).toLocaleDateString()}</span>
                     </div>
-                    <p className="font-body-md" style={{ color: 'var(--on-surface-variant)', lineHeight: 1.6 }}>{c.text}</p>
+                    <p className="font-body-md text-on-surface-variant leading-relaxed">{c.text}</p>
                   </div>
                 </div>
               )) : (
-                <p className="font-body-md" style={{ color: 'var(--on-surface-variant)' }}>No comments yet. Be the first to start the discussion!</p>
+                <p className="font-body-md text-on-surface-variant">No comments yet. Be the first to start the discussion!</p>
               )}
             </div>
           </div>
         </section>
-      </div>
+      </main>
 
       {/* Footer */}
-      <footer className="footer">
-        <div className="footer-inner">
-          <div>
-            <div className="font-headline-md" style={{ color: 'var(--primary)', fontWeight: 700 }}>ProjectHub</div>
-            <p className="font-body-md" style={{ color: 'var(--on-surface-variant)', marginTop: '4px' }}>© 2024-28 CS-A. All rights reserved.</p>
+      <footer className="bg-surface-container py-stack-lg border-t border-outline-variant/20">
+        <div className="max-w-container-max mx-auto px-margin-x text-center">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-stack-lg">
+            <div className="flex flex-col items-center md:items-start gap-stack-sm">
+              <span className="text-headline-md font-headline-md font-bold text-primary">ProjectHub</span>
+              <p className="text-body-md font-body-md text-on-surface-variant">© 2024-28 CS-A. All rights reserved.</p>
+            </div>
+            <div className="flex flex-wrap justify-center gap-stack-lg" />
+            <div className="flex items-center gap-stack-md">
+              <div className="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center hover:bg-secondary hover:text-white transition-all cursor-pointer" />
+            </div>
           </div>
         </div>
       </footer>
-    </main>
+    </body>
   );
 }
