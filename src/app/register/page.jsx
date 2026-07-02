@@ -38,7 +38,7 @@ export default function Register() {
         body: JSON.stringify({ name, email, password }),
       });
       if (res.ok) {
-        router.push('/dashboard');
+        router.push('/');
         router.refresh();
       } else {
         const data = await res.json();
