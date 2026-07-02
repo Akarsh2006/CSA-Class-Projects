@@ -103,9 +103,8 @@ export default function ProjectDetail() {
                 )}
               </div>
               <h1 className="text-white font-display text-headline-lg leading-tight mb-2">{project.title}</h1>
-              <p className="text-white/80 text-body-md mb-6 max-w-sm line-clamp-2">{project.description}</p>
               <div className="flex items-center justify-between pt-6 border-t border-white/20">
-                <span className="text-white/80 text-label-md font-label-md">By {project.studentName}</span>
+                <span className="text-white/80 text-label-md font-label-md">By {project.teamName || project.studentName}</span>
                 <button
                   onClick={handleLike}
                   disabled={isLiking}
