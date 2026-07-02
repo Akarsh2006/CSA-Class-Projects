@@ -48,22 +48,22 @@ export default function ProjectDetail() {
   };
 
   if (loading) return (
-    <body className="bg-background text-on-background font-body-md">
+    <div className="bg-background text-on-background font-body-md">
       <Header />
       <div className="flex justify-center items-center min-h-screen">
         <div className="w-8 h-8 border-2 border-primary/20 border-t-primary rounded-full animate-spin" />
       </div>
-    </body>
+    </div>
   );
 
   if (!project) return (
-    <body className="bg-background text-on-background font-body-md">
+    <div className="bg-background text-on-background font-body-md">
       <Header />
       <div className="text-center pt-40 text-on-surface-variant">
         <h2 className="text-headline-lg font-headline-lg mb-6">Project not found</h2>
         <Link href="/" className="px-6 py-3 bg-primary text-on-primary rounded-xl font-label-md font-semibold hover:opacity-90 transition-all">← Back to Home</Link>
       </div>
-    </body>
+    </div>
   );
 
   const hasLiked = user && Array.isArray(project.likes) && project.likes.some(l => l.toString() === user._id?.toString());
@@ -71,7 +71,7 @@ export default function ProjectDetail() {
   const allImages = [project.coverImage, ...(project.screenshots || [])].filter(Boolean);
 
   return (
-    <body className="bg-background text-on-background font-body-md">
+    <div className="bg-background text-on-background font-body-md">
       {/* TopNavBar */}
       <header className="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-md border-b border-outline-variant/30 transition-all duration-300">
         <div className="flex justify-between items-center h-20 px-margin-x max-w-container-max mx-auto">
@@ -327,6 +327,6 @@ export default function ProjectDetail() {
           </div>
         </div>
       </footer>
-    </body>
+    </div>
   );
 }

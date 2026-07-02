@@ -35,7 +35,7 @@ export default function Login() {
   };
 
   return (
-    <body className="bg-surface-container-low min-h-screen flex flex-col font-body-md text-on-surface selection:bg-primary/10 selection:text-primary">
+    <div className="bg-surface-container-low min-h-screen flex flex-col font-body-md text-on-surface selection:bg-primary/10 selection:text-primary">
 
       {/* Header */}
       <header className="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-margin-x h-20 max-w-container-max mx-auto bg-surface/80 backdrop-blur-md transition-all duration-300">
@@ -147,6 +147,6 @@ export default function Login() {
           <Link href="#" className="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-all duration-200">Contact Support</Link>
         </div>
       </footer>
-    </body>
+    </div>
   );
 }

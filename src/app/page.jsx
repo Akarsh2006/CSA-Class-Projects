@@ -23,7 +23,7 @@ export default function Home() {
   );
 
   return (
-    <body className="bg-background text-on-background font-body-md selection:bg-primary-fixed selection:text-on-primary-fixed">
+    <div className="bg-background text-on-background font-body-md selection:bg-primary-fixed selection:text-on-primary-fixed">
       {/* TopNavBar */}
       <Header />
 
@@ -107,6 +107,6 @@ export default function Home() {
           </div>
         </div>
       </footer>
-    </body>
+    </div>
   );
 }

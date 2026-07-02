@@ -142,15 +142,15 @@ export default function Dashboard() {
   };
 
   if (authChecking) return (
-    <body className="bg-surface text-on-surface font-body-md antialiased">
+    <div className="bg-surface text-on-surface font-body-md antialiased">
       <div className="flex justify-center items-center min-h-screen">
         <div className="w-8 h-8 border-2 border-primary/20 border-t-primary rounded-full animate-spin" />
       </div>
-    </body>
+    </div>
   );
 
   return (
-    <body className="bg-surface text-on-surface font-body-md antialiased">
+    <div className="bg-surface text-on-surface font-body-md antialiased">
 
       {/* Header */}
       <header className="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-md border-b border-outline-variant/30">
@@ -445,6 +445,6 @@ export default function Dashboard() {
           </div>
         </div>
       </footer>
-    </body>
+    </div>
   );
 }

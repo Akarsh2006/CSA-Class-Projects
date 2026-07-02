@@ -49,7 +49,7 @@ export default function Register() {
   };
 
   return (
-    <body className="bg-surface-container-low min-h-screen flex flex-col">
+    <div className="bg-surface-container-low min-h-screen flex flex-col">
 
       {/* Header */}
       <header className="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-margin-x h-20 max-w-container-max mx-auto bg-surface/80 backdrop-blur-md">
@@ -174,6 +174,6 @@ export default function Register() {
         </div>
         <div className="flex flex-wrap justify-center gap-6" />
       </footer>
-    </body>
+    </div>
   );
 }
