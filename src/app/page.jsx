@@ -9,6 +9,8 @@ export default function Home() {
   const [projects, setProjects] = useState([]);
   const [user, setUser] = useState(null);
   const [search, setSearch] = useState('');
+  const [filterOption, setFilterOption] = useState('Recent');
+  const [showFilter, setShowFilter] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -22,10 +24,20 @@ export default function Home() {
     }).catch(() => setLoading(false));
   }, []);
 
-  const filtered = projects.filter(p =>
+  let filtered = projects.filter(p =>
     p.title.toLowerCase().includes(search.toLowerCase()) ||
     p.studentName.toLowerCase().includes(search.toLowerCase())
   );
+
+  filtered.sort((a, b) => {
+    if (filterOption === 'Most liked') {
+      return (b.likes?.length || 0) - (a.likes?.length || 0);
+    } else if (filterOption === 'Oldest') {
+      return new Date(a.createdAt) - new Date(b.createdAt);
+    } else {
+      return new Date(b.createdAt) - new Date(a.createdAt);
+    }
+  });
 
   return (
     <div className="bg-background text-on-background font-body-md selection:bg-primary-fixed selection:text-on-primary-fixed">
@@ -44,8 +56,8 @@ export default function Home() {
               </div>
             </h1>
 
-            {/* Search bar */}
-            <div className="pt-stack-md flex justify-center">
+            {/* Search and Filter */}
+            <div className="pt-stack-md flex justify-center items-center gap-4">
               <div className="hidden md:flex relative max-w-md w-full group">
                 <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant group-focus-within:text-primary transition-colors">
                   search
@@ -57,6 +69,28 @@ export default function Home() {
                   value={search}
                   onChange={e => setSearch(e.target.value)}
                 />
+              </div>
+              <div className="relative">
+                <button
+                  onClick={() => setShowFilter(!showFilter)}
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-surface-container-low hover:bg-surface-container transition-colors text-on-surface-variant border border-outline-variant/30 focus:ring-2 focus:ring-primary/20"
+                >
+                  <span className="material-symbols-outlined text-[20px]">filter_list</span>
+                  <span className="text-body-md font-semibold hidden sm:inline">{filterOption}</span>
+                </button>
+                {showFilter && (
+                  <div className="absolute right-0 mt-2 w-48 bg-surface-container-lowest border border-outline-variant/30 rounded-xl shadow-xl z-50 overflow-hidden text-left">
+                    {['Recent', 'Oldest', 'Most liked'].map(opt => (
+                      <button
+                        key={opt}
+                        onClick={() => { setFilterOption(opt); setShowFilter(false); }}
+                        className={`w-full text-left px-4 py-3 text-body-md transition-colors ${filterOption === opt ? 'bg-primary/10 text-primary font-bold' : 'hover:bg-surface-container-low text-on-surface'}`}
+                      >
+                        {opt}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           </div>
