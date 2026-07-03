@@ -657,10 +657,10 @@ export default function ProjectDetail() {
 
                 <div id="overview-carousel" className="flex gap-gutter overflow-x-auto no-scrollbar snap-x snap-mandatory scroll-smooth rounded-3xl">
                   {allImages.map((src, i) => (
-                    <div key={i} className="flex-none w-full md:w-[70%] snap-start">
-                      <div className="bg-surface-container rounded-3xl p-6 h-full">
+                    <div key={i} className="flex-none h-[400px] md:h-[600px] snap-start">
+                      <div className="bg-surface-container rounded-3xl p-4 md:p-6 h-full inline-flex items-center justify-center">
                         <img
-                          className="w-full aspect-video object-cover rounded-2xl shadow-sm"
+                          className="h-full w-auto object-contain rounded-2xl shadow-sm"
                           src={src}
                           alt={`Screenshot ${i + 1}`}
                         />
