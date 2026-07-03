@@ -513,16 +513,16 @@ export default function ProjectDetail() {
           <div className="flex justify-end gap-3 mb-6 animate-in fade-in slide-in-from-top-2 duration-500">
             <button
               onClick={startEditing}
-              className="flex items-center gap-2 px-5 py-2.5 bg-surface-container-high text-on-surface rounded-xl font-label-md font-semibold hover:bg-surface-container transition-all border border-outline-variant/30 shadow-sm"
+              className="flex items-center gap-1.5 px-4 py-2 bg-surface-container-high text-on-surface rounded-lg text-label-md font-label-md font-semibold hover:bg-surface-container transition-all border border-outline-variant/30 shadow-sm"
             >
-              <span className="material-symbols-outlined text-[20px]">edit</span>
+              <span className="material-symbols-outlined text-[18px]">edit</span>
               Edit Project
             </button>
             <button
               onClick={() => setShowDeleteConfirm(true)}
-              className="flex items-center gap-2 px-5 py-2.5 bg-error-container text-on-error-container rounded-xl font-label-md font-semibold hover:opacity-80 transition-all shadow-sm"
+              className="flex items-center gap-1.5 px-4 py-2 bg-error-container text-on-error-container rounded-lg text-label-md font-label-md font-semibold hover:opacity-80 transition-all shadow-sm"
             >
-              <span className="material-symbols-outlined text-[20px]">delete</span>
+              <span className="material-symbols-outlined text-[18px]">delete</span>
               Delete
             </button>
           </div>
