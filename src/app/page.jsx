@@ -74,20 +74,7 @@ export default function Home() {
                 <ProjectCard key={project._id} project={project} user={user} />
               ))}
 
-              {/* Submit Project Card (6th slot) */}
-              <Link
-                href="/dashboard"
-                className="group relative aspect-[4/5] rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-outline-variant/10 block"
-              >
-                <div className="absolute inset-0 bg-surface-container-highest flex flex-col items-center justify-center p-stack-lg text-center gap-stack-md">
-                  <div className="w-20 h-20 rounded-full border-2 border-dashed border-outline flex items-center justify-center text-outline group-hover:text-primary group-hover:border-primary transition-all duration-300">
-                    <span className="material-symbols-outlined text-[40px]">add</span>
-                  </div>
-                  <div>
-                    <h3 className="text-headline-md font-headline-md text-on-surface">Submit Project</h3>
-                  </div>
-                </div>
-              </Link>
+
 
               {filtered.length === 0 && search && (
                 <div className="col-span-full text-center py-16 text-on-surface-variant font-body-lg">
