@@ -1,17 +1,41 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Header from '@/components/Header';
 
 export default function ProjectDetail() {
   const { id } = useParams();
+  const router = useRouter();
   const [project, setProject] = useState(null);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [commentText, setCommentText] = useState('');
   const [isLiking, setIsLiking] = useState(false);
+
+  // Edit state
+  const [isEditing, setIsEditing] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+
+  // Edit form fields
+  const [editTitle, setEditTitle] = useState('');
+  const [editTeamName, setEditTeamName] = useState('');
+  const [editOverview, setEditOverview] = useState('');
+  const [editImpact, setEditImpact] = useState('');
+  const [editDemoUrl, setEditDemoUrl] = useState('');
+  const [editGithubUrl, setEditGithubUrl] = useState('');
+  const [editCoverImage, setEditCoverImage] = useState(null);
+  const [editGalleryImages, setEditGalleryImages] = useState([]);
+  const [editTechTags, setEditTechTags] = useState([]);
+  const [editTagInput, setEditTagInput] = useState('');
+  const [editContributors, setEditContributors] = useState([{ name: '', role: '' }]);
+  const [editCategory, setEditCategory] = useState('Web Development');
+
+  const coverRef = useRef(null);
+  const galleryRef = useRef(null);
 
   useEffect(() => {
     Promise.all([
@@ -47,6 +71,126 @@ export default function ProjectDetail() {
     await refetch();
   };
 
+  // === Owner check ===
+  const isOwner = user && project && (user.userId || user._id)?.toString() === project.userId?.toString();
+
+  // === Edit helpers ===
+  const startEditing = () => {
+    setEditTitle(project.title || '');
+    setEditTeamName(project.teamName || '');
+    setEditOverview(project.description || '');
+    setEditImpact(project.impact || '');
+    setEditDemoUrl(project.demoUrl || '');
+    setEditGithubUrl(project.githubUrl || '');
+    setEditCoverImage(project.coverImage || null);
+    setEditGalleryImages(project.screenshots || []);
+    setEditTechTags(project.techStack || []);
+    setEditTagInput('');
+    setEditContributors(project.contributors?.length ? project.contributors.map(c => ({ name: c.name || '', role: c.role || '' })) : [{ name: '', role: '' }]);
+    setEditCategory(project.category || 'Web Development');
+    setIsEditing(true);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const cancelEditing = () => {
+    setIsEditing(false);
+  };
+
+  const processImage = (file) => new Promise(resolve => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const MAX = 1000;
+        const scale = Math.min(MAX / img.width, MAX / img.height, 1);
+        canvas.width = img.width * scale;
+        canvas.height = img.height * scale;
+        canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+        resolve(canvas.toDataURL('image/jpeg', 0.75));
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+
+  const handleEditCoverChange = async (e) => {
+    if (e.target.files?.[0]) setEditCoverImage(await processImage(e.target.files[0]));
+  };
+
+  const handleEditGalleryChange = async (e) => {
+    if (!e.target.files?.length) return;
+    const newImgs = await Promise.all([...e.target.files].map(processImage));
+    setEditGalleryImages(prev => [...prev, ...newImgs]);
+    if (galleryRef.current) galleryRef.current.value = '';
+  };
+
+  const addEditTag = () => {
+    const t = editTagInput.trim();
+    if (t && !editTechTags.includes(t)) setEditTechTags([...editTechTags, t]);
+    setEditTagInput('');
+  };
+
+  const removeEditTag = (tag) => setEditTechTags(editTechTags.filter(t => t !== tag));
+
+  const addEditContributor = () => setEditContributors([...editContributors, { name: '', role: '' }]);
+  const removeEditContributor = (i) => setEditContributors(editContributors.filter((_, idx) => idx !== i));
+  const updateEditContributor = (i, field, val) => {
+    const arr = [...editContributors]; arr[i][field] = val; setEditContributors(arr);
+  };
+
+  const handleSaveEdit = async (e) => {
+    e.preventDefault();
+    if (!editTitle.trim() || !editOverview.trim() || editTechTags.length === 0 || !editImpact.trim()) {
+      alert('Please fill in all required fields (Title, Overview, Tech Stack, Impact).');
+      return;
+    }
+    setSaving(true);
+    try {
+      const payload = {
+        title: editTitle,
+        teamName: editTeamName,
+        description: editOverview,
+        impact: editImpact,
+        demoUrl: editDemoUrl,
+        githubUrl: editGithubUrl,
+        coverImage: editCoverImage,
+        screenshots: editGalleryImages,
+        techStack: editTechTags,
+        contributors: editContributors.filter(c => c.name.trim()),
+        category: editCategory,
+      };
+      const res = await fetch(`/api/projects/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      if (res.ok) {
+        await refetch();
+        setIsEditing(false);
+      } else {
+        alert('Failed to save changes. Please try again.');
+      }
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    setDeleting(true);
+    try {
+      const res = await fetch(`/api/projects/${id}`, { method: 'DELETE' });
+      if (res.ok) {
+        router.push('/');
+      } else {
+        alert('Failed to delete project. Please try again.');
+      }
+    } finally {
+      setDeleting(false);
+      setShowDeleteConfirm(false);
+    }
+  };
+
   if (loading) return (
     <div className="bg-background text-on-background font-body-md">
       <Header />
@@ -70,11 +214,319 @@ export default function ProjectDetail() {
   const likesCount = Array.isArray(project.likes) ? project.likes.length : 0;
   const allImages = [project.coverImage, ...(project.screenshots || [])].filter(Boolean);
 
+  // ===================== EDIT MODE =====================
+  if (isEditing) {
+    return (
+      <div className="bg-background text-on-background font-body-md">
+        <Header />
+        <main className="pt-32 pb-stack-xl px-margin-x max-w-[800px] mx-auto">
+          <div className="mb-stack-lg text-center">
+            <h1 className="font-headline-lg text-headline-lg text-primary mb-2">Edit Project</h1>
+            <p className="text-body-md text-on-surface-variant">Update your project details below</p>
+          </div>
+
+          <div className="glass-panel p-8 rounded-xl shadow-sm space-y-8">
+            <form className="space-y-8" onSubmit={handleSaveEdit}>
+
+              {/* Project Title */}
+              <div className="space-y-2">
+                <label className="text-label-sm font-label-sm text-on-surface uppercase tracking-wider" htmlFor="edit-title">
+                  Project Title <span className="text-error">*</span>
+                </label>
+                <input
+                  className="w-full px-4 py-3 bg-surface-container-lowest border border-outline-variant/30 rounded-lg text-body-md transition-all"
+                  id="edit-title" type="text" required
+                  placeholder="e.g. Autonomous Drone Navigation System"
+                  value={editTitle} onChange={e => setEditTitle(e.target.value)}
+                />
+              </div>
+
+              {/* Team Name */}
+              <div className="space-y-2">
+                <label className="text-label-sm font-label-sm text-on-surface uppercase tracking-wider" htmlFor="edit-team-name">
+                  Team Name <span className="text-on-surface-variant normal-case">(Optional)</span>
+                </label>
+                <input
+                  className="w-full px-4 py-3 bg-surface-container-lowest border border-outline-variant/30 rounded-lg text-body-md transition-all"
+                  id="edit-team-name" type="text"
+                  placeholder="e.g. Cyber Squad (Leave blank to use your name)"
+                  value={editTeamName} onChange={e => setEditTeamName(e.target.value)}
+                />
+              </div>
+
+              {/* Category */}
+              <div className="space-y-2">
+                <label className="text-label-sm font-label-sm text-on-surface uppercase tracking-wider">Category</label>
+                <select
+                  className="w-full px-4 py-3 bg-surface-container-lowest border border-outline-variant/30 rounded-lg text-body-md transition-all"
+                  value={editCategory} onChange={e => setEditCategory(e.target.value)}
+                >
+                  <option>Web Development</option>
+                  <option>Mobile App</option>
+                  <option>AI / Machine Learning</option>
+                  <option>Game Development</option>
+                  <option>Robotics</option>
+                  <option>Other</option>
+                </select>
+              </div>
+
+              {/* Cover Thumbnail */}
+              <div className="space-y-2">
+                <label className="text-label-sm font-label-sm text-on-surface uppercase tracking-wider">Cover Thumbnail</label>
+                <div className="relative h-64 w-full group rounded-lg border-2 border-dashed border-outline-variant/50 flex flex-col items-center justify-center bg-surface-container-low hover:bg-surface-container transition-all cursor-pointer overflow-hidden">
+                  {editCoverImage ? (
+                    <div className="relative w-full h-full">
+                      <img src={editCoverImage} alt="Cover" className="w-full h-full object-cover" />
+                      <button
+                        type="button"
+                        onClick={() => { setEditCoverImage(null); if (coverRef.current) coverRef.current.value = ''; }}
+                        className="absolute top-2 right-2 bg-black/60 text-white rounded-full w-8 h-8 flex items-center justify-center hover:bg-black/80"
+                      >
+                        <span className="material-symbols-outlined text-[16px]">close</span>
+                      </button>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="relative text-center p-6 pointer-events-none">
+                        <span className="material-symbols-outlined text-4xl text-secondary mb-2 block">upload_file</span>
+                        <p className="text-body-md font-semibold text-on-surface">Click or drag to upload cover image</p>
+                        <p className="text-label-sm text-on-surface-variant mt-1">Recommended size: 1920x1080px (JPG, PNG)</p>
+                      </div>
+                      <input className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" type="file" accept="image/*" onChange={handleEditCoverChange} ref={coverRef} />
+                    </>
+                  )}
+                </div>
+              </div>
+
+              {/* Project Overview */}
+              <div className="space-y-2">
+                <label className="text-label-sm font-label-sm text-on-surface uppercase tracking-wider" htmlFor="edit-overview">
+                  Project Overview <span className="text-error">*</span>
+                </label>
+                <textarea
+                  className="w-full px-4 py-3 bg-surface-container-lowest border border-outline-variant/30 rounded-lg text-body-md transition-all"
+                  id="edit-overview"
+                  placeholder="Describe the problem, your solution, and the key features..."
+                  rows="6"
+                  required
+                  value={editOverview}
+                  onChange={e => setEditOverview(e.target.value)}
+                />
+              </div>
+
+              {/* Tech Stack & Tools */}
+              <div className="space-y-2">
+                <label className="text-label-sm font-label-sm text-on-surface uppercase tracking-wider">
+                  Tech Stack &amp; Tools <span className="text-error">*</span>
+                </label>
+                <div className="space-y-3">
+                  <div className="flex flex-wrap gap-2 mb-3">
+                    {editTechTags.map(tag => (
+                      <span key={tag} className="inline-flex items-center gap-1.5 px-3 py-1 bg-surface-container-highest text-on-surface-variant rounded-full text-label-md font-label-md">
+                        {tag}
+                        <button type="button" onClick={() => removeEditTag(tag)} className="hover:text-error">
+                          <span className="material-symbols-outlined text-xs">close</span>
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                  <div className="relative">
+                    <input
+                      className="w-full px-4 py-3 bg-surface-container-lowest border border-outline-variant/30 rounded-lg text-body-md pr-12 transition-all"
+                      placeholder="Add a tool (e.g. AWS, Docker, PyTorch) and press Enter"
+                      type="text"
+                      value={editTagInput}
+                      onChange={e => setEditTagInput(e.target.value)}
+                      onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addEditTag(); } }}
+                    />
+                    <button
+                      type="button" onClick={addEditTag}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-secondary hover:bg-secondary-fixed p-1.5 rounded-full transition-all"
+                    >
+                      <span className="material-symbols-outlined">add</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Gallery Images */}
+              <div className="space-y-2">
+                <label className="text-label-sm font-label-sm text-on-surface uppercase tracking-wider">Gallery Images</label>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {editGalleryImages.map((src, i) => (
+                    <div key={i} className="relative aspect-square rounded-lg overflow-hidden">
+                      <img src={src} alt={`Gallery ${i}`} className="w-full h-full object-cover" />
+                      <button
+                        type="button"
+                        onClick={() => setEditGalleryImages(editGalleryImages.filter((_, idx) => idx !== i))}
+                        className="absolute top-1 right-1 bg-black/60 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-black/80"
+                      >✕</button>
+                    </div>
+                  ))}
+                  <div className="aspect-square bg-surface-container-low border-2 border-dashed border-outline-variant/50 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:bg-surface-container transition-all group relative overflow-hidden">
+                    <span className="material-symbols-outlined text-on-surface-variant group-hover:text-secondary">add_photo_alternate</span>
+                    <span className="text-[10px] mt-1 font-label-sm text-on-surface-variant">Add Media</span>
+                    <input className="absolute inset-0 opacity-0 cursor-pointer" type="file" accept="image/*" multiple onChange={handleEditGalleryChange} ref={galleryRef} />
+                  </div>
+                </div>
+              </div>
+
+              {/* Project Impact */}
+              <div className="space-y-2">
+                <label className="text-label-sm font-label-sm text-on-surface uppercase tracking-wider" htmlFor="edit-impact">
+                  Project Impact <span className="text-error">*</span>
+                </label>
+                <textarea
+                  className="w-full px-4 py-3 bg-surface-container-lowest border border-outline-variant/30 rounded-lg text-body-md transition-all"
+                  id="edit-impact"
+                  placeholder="What difference did this project make? Any metrics or specific outcomes?"
+                  rows="4"
+                  required
+                  value={editImpact}
+                  onChange={e => setEditImpact(e.target.value)}
+                />
+              </div>
+
+              {/* Links */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="text-label-sm font-label-sm text-on-surface uppercase tracking-wider" htmlFor="edit-demo-url">Demo Video URL</label>
+                  <div className="relative">
+                    <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">videocam</span>
+                    <input className="w-full pl-10 pr-4 py-3 bg-surface-container-lowest border border-outline-variant/30 rounded-lg text-body-md transition-all" id="edit-demo-url" type="url" placeholder="https://youtube.com/..." value={editDemoUrl} onChange={e => setEditDemoUrl(e.target.value)} />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-label-sm font-label-sm text-on-surface uppercase tracking-wider" htmlFor="edit-github-url">GitHub Repository</label>
+                  <div className="relative">
+                    <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">code</span>
+                    <input className="w-full pl-10 pr-4 py-3 bg-surface-container-lowest border border-outline-variant/30 rounded-lg text-body-md transition-all" id="edit-github-url" type="url" placeholder="https://github.com/user/repo" value={editGithubUrl} onChange={e => setEditGithubUrl(e.target.value)} />
+                  </div>
+                </div>
+              </div>
+
+              {/* Contributors */}
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <label className="text-label-sm font-label-sm text-on-surface uppercase tracking-wider">Contributors</label>
+                  <button type="button" onClick={addEditContributor} className="text-secondary text-label-sm font-label-sm hover:underline flex items-center gap-1">
+                    <span className="material-symbols-outlined text-sm">person_add</span> Add Contributor
+                  </button>
+                </div>
+                <div className="space-y-3">
+                  {editContributors.map((c, i) => (
+                    <div key={i} className="flex gap-4 p-4 bg-surface-container-low rounded-lg border border-outline-variant/20 items-end">
+                      <div className="flex-1 space-y-2">
+                        <label className="text-[10px] text-on-surface-variant uppercase font-semibold">Full Name</label>
+                        <input
+                          className="w-full bg-surface-container-lowest border-none p-0 text-body-md focus:ring-0"
+                          type="text" placeholder="Jane Doe"
+                          value={c.name} onChange={e => updateEditContributor(i, 'name', e.target.value)}
+                        />
+                      </div>
+                      <div className="flex-1 space-y-2">
+                        <label className="text-[10px] text-on-surface-variant uppercase font-semibold">Role</label>
+                        <input
+                          className="w-full bg-surface-container-lowest border-none p-0 text-body-md focus:ring-0"
+                          type="text" placeholder="Lead Developer"
+                          value={c.role} onChange={e => updateEditContributor(i, 'role', e.target.value)}
+                        />
+                      </div>
+                      <button type="button" onClick={() => removeEditContributor(i)} className="p-2 text-on-surface-variant hover:text-error transition-colors">
+                        <span className="material-symbols-outlined">delete_outline</span>
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="pt-8 flex flex-col md:flex-row gap-4 border-t border-outline-variant/20">
+                <button
+                  type="submit" disabled={saving}
+                  className="flex-1 py-4 bg-primary text-on-primary font-headline-md text-headline-md rounded-xl hover:bg-primary-container transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 disabled:opacity-70"
+                >
+                  {saving ? (
+                    <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin mx-auto" />
+                  ) : 'Save Changes'}
+                </button>
+                <button type="button" onClick={cancelEditing} className="px-10 py-4 bg-surface-container-highest text-on-surface font-headline-md text-headline-md rounded-xl hover:bg-outline-variant/40 transition-all">
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  // ===================== VIEW MODE =====================
   return (
     <div className="bg-background text-on-background font-body-md">
       <Header />
 
+      {/* Delete Confirmation Modal */}
+      {showDeleteConfirm && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="bg-surface-container-lowest rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl border border-outline-variant/30 animate-in fade-in zoom-in-95 duration-200">
+            <div className="text-center">
+              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-error/10 flex items-center justify-center">
+                <span className="material-symbols-outlined text-error text-[32px]">warning</span>
+              </div>
+              <h3 className="text-headline-md font-headline-md text-on-surface mb-2">Delete Project?</h3>
+              <p className="text-body-md text-on-surface-variant mb-6">
+                This action cannot be undone. The project <strong>"{project.title}"</strong> and all its data (comments, likes) will be permanently removed.
+              </p>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setShowDeleteConfirm(false)}
+                  disabled={deleting}
+                  className="flex-1 py-3 bg-surface-container-highest text-on-surface font-label-md font-semibold rounded-xl hover:bg-outline-variant/40 transition-all"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleDelete}
+                  disabled={deleting}
+                  className="flex-1 py-3 bg-error text-white font-label-md font-semibold rounded-xl hover:opacity-90 transition-all disabled:opacity-70 flex items-center justify-center gap-2"
+                >
+                  {deleting ? (
+                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  ) : (
+                    <>
+                      <span className="material-symbols-outlined text-[18px]">delete_forever</span>
+                      Delete Permanently
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       <main className="pt-24 pb-stack-xl px-margin-x max-w-container-max mx-auto">
+
+        {/* === Owner Action Bar === */}
+        {isOwner && (
+          <div className="flex justify-end gap-3 mb-6 animate-in fade-in slide-in-from-top-2 duration-500">
+            <button
+              onClick={startEditing}
+              className="flex items-center gap-2 px-5 py-2.5 bg-surface-container-high text-on-surface rounded-xl font-label-md font-semibold hover:bg-surface-container transition-all border border-outline-variant/30 shadow-sm"
+            >
+              <span className="material-symbols-outlined text-[20px]">edit</span>
+              Edit Project
+            </button>
+            <button
+              onClick={() => setShowDeleteConfirm(true)}
+              className="flex items-center gap-2 px-5 py-2.5 bg-error-container text-on-error-container rounded-xl font-label-md font-semibold hover:opacity-80 transition-all shadow-sm"
+            >
+              <span className="material-symbols-outlined text-[20px]">delete</span>
+              Delete
+            </button>
+          </div>
+        )}
 
         {/* === HERO: 12-col grid === */}
         <section className="grid grid-cols-1 lg:grid-cols-12 gap-gutter mb-stack-xl animate-in fade-in slide-in-from-bottom-4 duration-700">
