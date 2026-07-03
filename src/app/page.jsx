@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Header from '@/components/Header';
 import ProjectCard from '@/components/ProjectCard';
@@ -11,7 +11,18 @@ export default function Home() {
   const [search, setSearch] = useState('');
   const [filterOption, setFilterOption] = useState('Recent');
   const [showFilter, setShowFilter] = useState(false);
+  const filterRef = useRef(null);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (filterRef.current && !filterRef.current.contains(event.target)) {
+        setShowFilter(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   useEffect(() => {
     Promise.all([
@@ -70,7 +81,7 @@ export default function Home() {
                   onChange={e => setSearch(e.target.value)}
                 />
               </div>
-              <div className="relative">
+              <div className="relative" ref={filterRef}>
                 <button
                   onClick={() => setShowFilter(!showFilter)}
                   className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-surface-container-low hover:bg-surface-container transition-colors text-on-surface-variant border border-outline-variant/30 focus:ring-2 focus:ring-primary/20"

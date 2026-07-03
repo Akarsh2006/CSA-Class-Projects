@@ -1,11 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 export default function Header() {
   const [user, setUser] = useState(null);
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const profileRef = useRef(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -21,6 +23,16 @@ export default function Header() {
     };
     window.addEventListener('scroll', onScroll);
     return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (profileRef.current && !profileRef.current.contains(event.target)) {
+        setShowProfileMenu(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   const logout = async () => {
@@ -45,18 +57,17 @@ export default function Header() {
           </Link>
 
           {user ? (
-            <div className="relative group ml-2">
+            <div className="relative group ml-2" ref={profileRef}>
               <button
                 className="w-10 h-10 rounded-full bg-surface-container-high text-on-surface flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-primary/20 border border-outline-variant/30 overflow-hidden"
-                onClick={(e) => {
-                  e.currentTarget.nextElementSibling.classList.toggle('hidden');
-                }}
+                onClick={() => setShowProfileMenu(!showProfileMenu)}
               >
                 <span className="material-symbols-outlined text-on-surface-variant text-[24px]">person</span>
               </button>
               
               {/* Dropdown Menu */}
-              <div className="hidden absolute right-0 mt-2 w-56 bg-surface-container-lowest border border-outline-variant/30 rounded-xl shadow-lg overflow-hidden z-50">
+              {showProfileMenu && (
+                <div className="absolute right-0 mt-2 w-56 bg-surface-container-lowest border border-outline-variant/30 rounded-xl shadow-lg overflow-hidden z-50">
                 <div className="px-4 py-3 border-b border-outline-variant/20 bg-surface-container-low/50">
                   <p className="text-body-md font-semibold text-on-surface truncate">{user.name}</p>
                   <p className="text-label-sm text-on-surface-variant truncate">{user.email}</p>
@@ -66,7 +77,8 @@ export default function Header() {
                     Log out
                   </button>
                 </div>
-              </div>
+                </div>
+              )}
             </div>
           ) : (
             <>
