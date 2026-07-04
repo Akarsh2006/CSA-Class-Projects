@@ -154,10 +154,10 @@ export default function Register() {
             </form>
 
             {/* Toggle Link */}
-            <div className="mt-8 pt-6 border-t border-outline-variant/30 text-center">
-              <p className="font-body-md text-body-md text-on-surface-variant">
+            <div className="mt-stack-lg text-center border-t border-surface-container-high pt-stack-md">
+              <p className="font-body-md text-on-surface-variant">
                 Already have an account?{' '}
-                <Link href="/login" className="text-secondary font-headline-md text-headline-md hover:underline transition-all">
+                <Link href="/login" className="text-primary font-semibold hover:underline decoration-2 underline-offset-4 transition-all">
                   Log In
                 </Link>
               </p>

@@ -8,7 +8,6 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPw, setShowPw] = useState(false);
-  const [remember, setRemember] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -50,7 +49,6 @@ export default function Login() {
           {/* Header */}
           <div className="text-center mb-stack-lg">
             <h1 className="font-headline-lg text-headline-lg text-primary mb-2">Log In</h1>
-            <p className="font-body-md text-on-surface-variant">Welcome back to BuildFolio</p>
           </div>
 
           {error && (
@@ -97,18 +95,6 @@ export default function Login() {
                   <span className="material-symbols-outlined text-[20px]">{showPw ? 'visibility_off' : 'visibility'}</span>
                 </button>
               </div>
-            </div>
-
-            {/* Remember me */}
-            <div className="flex items-center space-x-2 py-1">
-              <input
-                className="w-4 h-4 rounded-md border-outline-variant text-primary focus:ring-primary/20 cursor-pointer"
-                id="remember" type="checkbox"
-                checked={remember} onChange={e => setRemember(e.target.checked)}
-              />
-              <label className="font-body-md text-on-surface-variant cursor-pointer select-none" htmlFor="remember">
-                Remember me
-              </label>
             </div>
 
             {/* Submit */}
