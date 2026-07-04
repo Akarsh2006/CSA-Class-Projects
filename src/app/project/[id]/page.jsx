@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Header from '@/components/Header';
+import ImageCropper from '@/components/ImageCropper';
 
 export default function ProjectDetail() {
   const { id } = useParams();
@@ -36,6 +37,8 @@ export default function ProjectDetail() {
   const [editTagInput, setEditTagInput] = useState('');
   const [editContributors, setEditContributors] = useState([{ name: '', role: '' }]);
   const [editCategory, setEditCategory] = useState('Web Development');
+  const [selectedImageForCrop, setSelectedImageForCrop] = useState(null);
+  const [showCropper, setShowCropper] = useState(false);
 
   const coverRef = useRef(null);
   const galleryRef = useRef(null);
@@ -139,7 +142,11 @@ export default function ProjectDetail() {
   });
 
   const handleEditCoverChange = async (e) => {
-    if (e.target.files?.[0]) setEditCoverImage(await processImage(e.target.files[0]));
+    if (e.target.files?.[0]) {
+      const processed = await processImage(e.target.files[0]);
+      setSelectedImageForCrop(processed);
+      setShowCropper(true);
+    }
   };
 
   const handleEditGalleryChange = async (e) => {
@@ -242,6 +249,19 @@ export default function ProjectDetail() {
   if (isEditing) {
     return (
       <div className="bg-background text-on-background font-body-md">
+        {showCropper && (
+          <ImageCropper
+            image={selectedImageForCrop}
+            onComplete={(croppedImg) => {
+              setEditCoverImage(croppedImg);
+              setShowCropper(false);
+            }}
+            onCancel={() => {
+              setShowCropper(false);
+              if (coverRef.current) coverRef.current.value = '';
+            }}
+          />
+        )}
         <Header />
         <main className="pt-32 pb-stack-xl px-margin-x max-w-[800px] mx-auto">
           <div className="mb-stack-lg text-center">

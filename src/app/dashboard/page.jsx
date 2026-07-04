@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Header from '@/components/Header';
+import ImageCropper from '@/components/ImageCropper';
 
 export default function Dashboard() {
   const [user, setUser] = useState(null);
@@ -27,6 +28,8 @@ export default function Dashboard() {
   const [tagInput, setTagInput] = useState('');
   const [contributors, setContributors] = useState([{ name: '', role: '' }]);
   const [category, setCategory] = useState('Web Development');
+  const [selectedImageForCrop, setSelectedImageForCrop] = useState(null);
+  const [showCropper, setShowCropper] = useState(false);
 
   const coverRef = useRef(null);
   const galleryRef = useRef(null);
@@ -70,7 +73,11 @@ export default function Dashboard() {
   });
 
   const handleCoverChange = async (e) => {
-    if (e.target.files?.[0]) setCoverImage(await processImage(e.target.files[0]));
+    if (e.target.files?.[0]) {
+      const processed = await processImage(e.target.files[0]);
+      setSelectedImageForCrop(processed);
+      setShowCropper(true);
+    }
   };
 
   const handleGalleryChange = async (e) => {
@@ -157,7 +164,19 @@ export default function Dashboard() {
 
   return (
     <div className="bg-surface text-on-surface font-body-md antialiased">
-
+      {showCropper && (
+        <ImageCropper
+          image={selectedImageForCrop}
+          onComplete={(croppedImg) => {
+            setCoverImage(croppedImg);
+            setShowCropper(false);
+          }}
+          onCancel={() => {
+            setShowCropper(false);
+            if (coverRef.current) coverRef.current.value = '';
+          }}
+        />
+      )}
       <Header />
 
       <main className="pt-32 pb-stack-xl px-margin-x max-w-[800px] mx-auto">
