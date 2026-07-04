@@ -243,7 +243,7 @@ export default function ProjectDetail() {
 
   const hasLiked = user && Array.isArray(project.likes) && project.likes.some(l => l.toString() === (user.userId || user._id)?.toString());
   const likesCount = Array.isArray(project.likes) ? project.likes.length : 0;
-  const allImages = [project.coverImage, ...(project.screenshots || [])].filter(Boolean);
+  const allImages = [...(project.screenshots || [])].filter(Boolean);
 
   // ===================== EDIT MODE =====================
   if (isEditing) {
