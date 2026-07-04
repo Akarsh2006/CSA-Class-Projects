@@ -117,8 +117,10 @@ export default function Dashboard() {
     }
     setSubmitting(true);
     try {
+      const formatUrl = (u) => (u && !/^https?:\/\//i.test(u)) ? `https://${u}` : u;
       const payload = {
-        title, teamName, description: overview, impact, demoUrl, githubUrl,
+        title, teamName, description: overview, impact, 
+        demoUrl: formatUrl(demoUrl), githubUrl: formatUrl(githubUrl),
         coverImage, screenshots: galleryImages, techStack: techTags,
         contributors: contributors.filter(c => c.name.trim()), category,
       };
@@ -385,14 +387,14 @@ export default function Dashboard() {
                 <label className="text-label-sm font-label-sm text-on-surface uppercase tracking-wider" htmlFor="demo-url">Demo Video URL</label>
                 <div className="relative">
                   <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">videocam</span>
-                  <input className="w-full pl-10 pr-4 py-3 bg-surface-container-lowest border border-outline-variant/30 rounded-lg text-body-md transition-all" id="demo-url" type="url" placeholder="https://youtube.com/..." value={demoUrl} onChange={e => setDemoUrl(e.target.value)} />
+                  <input className="w-full pl-10 pr-4 py-3 bg-surface-container-lowest border border-outline-variant/30 rounded-lg text-body-md transition-all" id="demo-url" type="text" placeholder="youtube.com/..." value={demoUrl} onChange={e => setDemoUrl(e.target.value)} />
                 </div>
               </div>
               <div className="space-y-2">
                 <label className="text-label-sm font-label-sm text-on-surface uppercase tracking-wider" htmlFor="github-url">GitHub Repository</label>
                 <div className="relative">
                   <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">code</span>
-                  <input className="w-full pl-10 pr-4 py-3 bg-surface-container-lowest border border-outline-variant/30 rounded-lg text-body-md transition-all" id="github-url" type="url" placeholder="https://github.com/user/repo" value={githubUrl} onChange={e => setGithubUrl(e.target.value)} />
+                  <input className="w-full pl-10 pr-4 py-3 bg-surface-container-lowest border border-outline-variant/30 rounded-lg text-body-md transition-all" id="github-url" type="text" placeholder="github.com/user/repo" value={githubUrl} onChange={e => setGithubUrl(e.target.value)} />
                 </div>
               </div>
             </div>
