@@ -1,17 +1,18 @@
 import dbConnect from '@/lib/mongodb';
 import User from '@/models/User';
+import Otp from '@/models/Otp';
 import { signToken } from '@/lib/auth';
 
 export async function POST(request) {
   try {
     await dbConnect();
 
-    const { name, email, password } = await request.json();
+    const { name, email, password, otp } = await request.json();
 
     // Validate all fields are present
-    if (!name || !email || !password) {
+    if (!name || !email || !password || !otp) {
       return Response.json(
-        { error: 'Name, email, and password are required' },
+        { error: 'Name, email, password, and OTP are required' },
         { status: 400 }
       );
     }
@@ -24,6 +25,18 @@ export async function POST(request) {
         { status: 409 }
       );
     }
+
+    // Verify OTP
+    const validOtp = await Otp.findOne({ email: email.toLowerCase(), otp });
+    if (!validOtp) {
+      return Response.json(
+        { error: 'Invalid or expired OTP' },
+        { status: 400 }
+      );
+    }
+
+    // Delete the OTP as it's been used
+    await Otp.deleteOne({ _id: validOtp._id });
 
     // Create new user (password is hashed by pre-save hook)
     const user = await User.create({ name, email, password });

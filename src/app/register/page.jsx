@@ -11,6 +11,12 @@ export default function Register() {
   const [showPw, setShowPw] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  
+  const [showOtpModal, setShowOtpModal] = useState(false);
+  const [otp, setOtp] = useState(['', '', '', '', '', '']);
+  const [otpLoading, setOtpLoading] = useState(false);
+  const otpRefs = [useRef(null), useRef(null), useRef(null), useRef(null), useRef(null), useRef(null)];
+  
   const cardRef = useRef(null);
   const router = useRouter();
 
@@ -27,25 +33,78 @@ export default function Register() {
     return () => document.removeEventListener('mousemove', onMove);
   }, []);
 
-  const handleSubmit = async (e) => {
+  const handleGetOtp = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setError('');
+    try {
+      const res = await fetch('/api/auth/send-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setShowOtpModal(true);
+      } else {
+        setError(data.error || 'Failed to send OTP.');
+      }
+    } catch { setError('Unexpected error. Please try again.'); }
+    finally { setLoading(false); }
+  };
+
+  const handleVerifyOtp = async (e) => {
+    e?.preventDefault();
+    const otpValue = otp.join('');
+    if (otpValue.length !== 6) {
+      setError('Please enter a valid 6-digit OTP.');
+      return;
+    }
+    setOtpLoading(true);
     setError('');
     try {
       const res = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, password }),
+        body: JSON.stringify({ name, email, password, otp: otpValue }),
       });
+      const data = await res.json();
       if (res.ok) {
+        setShowOtpModal(false);
         router.push('/');
         router.refresh();
       } else {
-        const data = await res.json();
-        setError(data.error || 'Registration failed. Please try again.');
+        setError(data.error || 'Registration failed.');
       }
     } catch { setError('Unexpected error. Please try again.'); }
-    finally { setLoading(false); }
+    finally { setOtpLoading(false); }
+  };
+
+  const handleOtpChange = (index, value) => {
+    if (isNaN(value)) return;
+    const newOtp = [...otp];
+    newOtp[index] = value;
+    setOtp(newOtp);
+
+    // Move to next input if value is entered
+    if (value !== '' && index < 5) {
+      otpRefs[index + 1].current.focus();
+    }
+    
+    // Auto-verify if all 6 digits are filled
+    if (value !== '' && index === 5 && newOtp.every(d => d !== '')) {
+      // Small delay to allow state to update before verifying
+      setTimeout(() => {
+         const btn = document.getElementById('verify-btn');
+         if (btn) btn.click();
+      }, 100);
+    }
+  };
+
+  const handleOtpKeyDown = (index, e) => {
+    if (e.key === 'Backspace' && otp[index] === '' && index > 0) {
+      otpRefs[index - 1].current.focus();
+    }
   };
 
   return (
@@ -79,7 +138,7 @@ export default function Register() {
               </div>
             )}
 
-            <form className="space-y-6" onSubmit={handleSubmit}>
+            <form className="space-y-6" onSubmit={handleGetOtp}>
               {/* Full Name */}
               <div className="space-y-1">
                 <label className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider block ml-1" htmlFor="full_name">
@@ -146,7 +205,7 @@ export default function Register() {
                   <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                 ) : (
                   <>
-                    <span>Register</span>
+                    <span>Get OTP</span>
                     <span className="material-symbols-outlined">arrow_forward</span>
                   </>
                 )}
@@ -174,6 +233,61 @@ export default function Register() {
         </div>
         <div className="flex flex-wrap justify-center gap-6" />
       </footer>
+    {/* OTP Modal */}
+    {showOtpModal && (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-surface-container-highest/80 backdrop-blur-sm p-4">
+        <div className="bg-surface-container-lowest rounded-3xl p-stack-xl max-w-sm w-full shadow-2xl border border-primary/10 relative text-center">
+          <button 
+            onClick={() => setShowOtpModal(false)}
+            className="absolute top-4 right-4 text-on-surface-variant hover:text-on-surface transition-colors"
+          >
+            <span className="material-symbols-outlined">close</span>
+          </button>
+          
+          <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 text-primary">
+            <span className="material-symbols-outlined text-3xl">verified_user</span>
+          </div>
+          
+          <h2 className="font-headline-md text-headline-md font-bold text-on-surface mb-2">Enter Code</h2>
+          <p className="font-body-sm text-body-sm text-on-surface-variant mb-8">
+            OTP has sent to <span className="font-semibold text-primary">{email}</span>
+          </p>
+
+          <div className="flex justify-between gap-2 mb-8">
+            {otp.map((digit, index) => (
+              <input
+                key={index}
+                ref={otpRefs[index]}
+                type="text"
+                maxLength={1}
+                value={digit}
+                onChange={(e) => handleOtpChange(index, e.target.value)}
+                onKeyDown={(e) => handleOtpKeyDown(index, e)}
+                className="w-12 h-14 text-center font-headline-md text-headline-md bg-surface border border-outline-variant rounded-xl focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-on-surface"
+              />
+            ))}
+          </div>
+
+          {error && (
+            <p className="text-error text-body-sm mb-4">{error}</p>
+          )}
+
+          <button
+            id="verify-btn"
+            onClick={handleVerifyOtp}
+            disabled={otpLoading || otp.some(d => d === '')}
+            className="w-full bg-primary text-on-primary font-headline-sm py-4 rounded-xl hover:opacity-90 active:scale-[0.98] transition-all disabled:opacity-50 flex justify-center items-center h-14"
+          >
+            {otpLoading ? (
+              <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+            ) : (
+              'Verify Email'
+            )}
+          </button>
+        </div>
+      </div>
+    )}
+
     </div>
   );
 }
