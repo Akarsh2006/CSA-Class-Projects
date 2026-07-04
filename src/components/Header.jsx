@@ -47,7 +47,7 @@ export default function Header() {
         {/* Left: Logo + search */}
         <div className="flex items-center gap-stack-lg flex-1">
           <Link href="/" className="text-headline-md font-headline-md font-bold tracking-tight text-primary whitespace-nowrap">
-            ProjectHub
+            BuildFolio
           </Link>
         </div>
 

@@ -54,7 +54,7 @@ export default function Register() {
       {/* Header */}
       <header className="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-margin-x h-20 max-w-container-max mx-auto bg-surface/80 backdrop-blur-md">
         <div className="flex items-center gap-stack-md">
-          <Link href="/" className="font-headline-md text-headline-md font-bold text-primary">ProjectHub</Link>
+          <Link href="/" className="font-headline-md text-headline-md font-bold text-primary">BuildFolio</Link>
         </div>
         <nav className="hidden md:flex items-center space-x-8" />
         <div className="flex items-center" />
@@ -169,7 +169,7 @@ export default function Register() {
       {/* Footer */}
       <footer className="w-full py-stack-lg px-margin-x flex flex-col md:flex-row justify-between items-center max-w-container-max mx-auto bg-surface border-t border-surface-container-highest">
         <div className="flex flex-col items-center md:items-start mb-6 md:mb-0">
-          <span className="font-label-md text-label-md text-on-surface-variant">ProjectHub</span>
+          <span className="font-label-md text-label-md text-on-surface-variant">BuildFolio</span>
           <p className="font-body-md text-body-md text-on-surface-variant opacity-70 mt-2">© 2024-28 CS-A. All rights reserved.</p>
         </div>
         <div className="flex flex-wrap justify-center gap-6" />

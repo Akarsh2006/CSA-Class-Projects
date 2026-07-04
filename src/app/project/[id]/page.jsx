@@ -829,7 +829,7 @@ export default function ProjectDetail() {
         <div className="max-w-container-max mx-auto px-margin-x text-center">
           <div className="flex flex-col md:flex-row justify-between items-center gap-stack-lg">
             <div className="flex flex-col items-center md:items-start gap-stack-sm">
-              <span className="text-headline-md font-headline-md font-bold text-primary">ProjectHub</span>
+              <span className="text-headline-md font-headline-md font-bold text-primary">BuildFolio</span>
               <p className="text-body-md font-body-md text-on-surface-variant">© 2024-28 CS-A. All rights reserved.</p>
             </div>
             <div className="flex flex-wrap justify-center gap-stack-lg" />

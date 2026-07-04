@@ -39,7 +39,7 @@ export default function Login() {
 
       {/* Header */}
       <header className="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-margin-x h-20 max-w-container-max mx-auto bg-surface/80 backdrop-blur-md transition-all duration-300">
-        <Link href="/" className="font-headline-md text-headline-md font-bold text-primary">ProjectHub</Link>
+        <Link href="/" className="font-headline-md text-headline-md font-bold text-primary">BuildFolio</Link>
         <nav className="hidden md:flex items-center space-x-gutter" />
       </header>
 
@@ -50,7 +50,7 @@ export default function Login() {
           {/* Header */}
           <div className="text-center mb-stack-lg">
             <h1 className="font-headline-lg text-headline-lg text-primary mb-2">Log In</h1>
-            <p className="font-body-md text-on-surface-variant">Welcome back to ProjectHub</p>
+            <p className="font-body-md text-on-surface-variant">Welcome back to BuildFolio</p>
           </div>
 
           {error && (
