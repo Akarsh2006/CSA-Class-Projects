@@ -13,6 +13,8 @@ export default function ProjectDetail() {
   const [loading, setLoading] = useState(true);
   const [commentText, setCommentText] = useState('');
   const [isLiking, setIsLiking] = useState(false);
+  const [commentToDelete, setCommentToDelete] = useState(null);
+  const [deletingComment, setDeletingComment] = useState(false);
 
   // Edit state
   const [isEditing, setIsEditing] = useState(false);
@@ -69,6 +71,22 @@ export default function ProjectDetail() {
     });
     setCommentText('');
     await refetch();
+  };
+
+  const handleDeleteComment = async () => {
+    if (!commentToDelete) return;
+    setDeletingComment(true);
+    try {
+      const res = await fetch(`/api/projects/${id}/comments/${commentToDelete._id}`, { method: 'DELETE' });
+      if (res.ok) {
+        await refetch();
+      } else {
+        alert('Failed to delete comment.');
+      }
+    } finally {
+      setDeletingComment(false);
+      setCommentToDelete(null);
+    }
   };
 
   // === Owner check ===
@@ -466,6 +484,46 @@ export default function ProjectDetail() {
     <div className="bg-background text-on-background font-body-md">
       <Header />
 
+      {/* Delete Comment Confirmation Modal */}
+      {commentToDelete && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="bg-surface-container-lowest rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl border border-outline-variant/30 animate-in fade-in zoom-in-95 duration-200">
+            <div className="text-center">
+              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-error/10 flex items-center justify-center">
+                <span className="material-symbols-outlined text-error text-[32px]">delete</span>
+              </div>
+              <h3 className="text-headline-md font-headline-md text-on-surface mb-2">Delete Comment?</h3>
+              <p className="text-body-md text-on-surface-variant mb-6">
+                Are you sure you want to delete this comment? This action cannot be undone.
+              </p>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setCommentToDelete(null)}
+                  disabled={deletingComment}
+                  className="flex-1 py-3 bg-surface-container-highest text-on-surface font-label-md font-semibold rounded-xl hover:bg-outline-variant/40 transition-all"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleDeleteComment}
+                  disabled={deletingComment}
+                  className="flex-1 py-3 bg-error text-white font-label-md font-semibold rounded-xl hover:opacity-90 transition-all disabled:opacity-70 flex items-center justify-center gap-2"
+                >
+                  {deletingComment ? (
+                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  ) : (
+                    <>
+                      <span className="material-symbols-outlined text-[18px]">delete_forever</span>
+                      Delete
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Delete Confirmation Modal */}
       {showDeleteConfirm && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm">
@@ -730,7 +788,16 @@ export default function ProjectDetail() {
                   <div className="flex-1">
                     <div className="flex items-baseline gap-2 mb-2">
                       <span className="font-body-md font-semibold text-on-surface">{c.userName}</span>
-                      <span className="font-label-sm text-on-surface-variant">{new Date(c.createdAt).toLocaleDateString()}</span>
+                      <span className="font-label-sm text-on-surface-variant flex-1">{new Date(c.createdAt).toLocaleDateString()}</span>
+                      {user && (user.userId || user._id)?.toString() === c.user?.toString() && (
+                        <button
+                          onClick={() => setCommentToDelete(c)}
+                          className="text-on-surface-variant hover:text-error transition-colors p-1 rounded-full hover:bg-error/10 ml-2 flex items-center justify-center"
+                          title="Delete comment"
+                        >
+                          <span className="material-symbols-outlined text-[16px]">delete</span>
+                        </button>
+                      )}
                     </div>
                     <p className="font-body-md text-on-surface-variant leading-relaxed">{c.text}</p>
                   </div>
