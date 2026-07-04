@@ -17,7 +17,7 @@ export default function RootLayout({ children }) {
           rel="stylesheet"
         />
         {/* Tailwind CDN with academic config */}
-        <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries" />
+        <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries,typography" />
         <script
           id="tailwind-config"
           dangerouslySetInnerHTML={{

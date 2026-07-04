@@ -132,6 +132,47 @@ export default function Dashboard() {
     } finally { setSubmitting(false); }
   };
 
+  const handleFormatMarkdown = (icon, isEditMode = false) => {
+    const textareaId = isEditMode ? 'edit-project-overview' : 'project-overview';
+    const textState = isEditMode ? editOverview : overview;
+    const setTextState = isEditMode ? setEditOverview : setOverview;
+    const textarea = document.getElementById(textareaId);
+    if (!textarea) return;
+
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const selected = textState.slice(start, end);
+
+    let format = '';
+    let selectionOffset = 0;
+    
+    if (icon === 'format_bold') {
+      format = `**${selected || 'bold'}**`;
+      selectionOffset = 2;
+    } else if (icon === 'format_italic') {
+      format = `*${selected || 'italic'}*`;
+      selectionOffset = 1;
+    } else if (icon === 'format_list_bulleted') {
+      format = `\n- ${selected || 'item'}`;
+      selectionOffset = 3;
+    } else if (icon === 'link') {
+      const url = prompt('Enter URL:', 'https://');
+      if (!url) return;
+      format = `[${selected || 'link text'}](${url})`;
+      selectionOffset = 1;
+    }
+
+    const newText = textState.slice(0, start) + format + textState.slice(end);
+    setTextState(newText);
+    
+    setTimeout(() => {
+      textarea.focus();
+      const newCursorPos = start + selectionOffset;
+      const selectLength = selected ? selected.length : (icon === 'link' ? 9 : (icon === 'format_list_bulleted' ? 4 : (icon === 'format_italic' ? 6 : 4)));
+      textarea.setSelectionRange(newCursorPos, newCursorPos + selectLength);
+    }, 10);
+  };
+
   const startEdit = async (id) => {
     const res = await fetch(`/api/projects/${id}`);
     if (!res.ok) return;
@@ -285,10 +326,9 @@ export default function Dashboard() {
                 Project Overview <span className="text-error">*</span>
               </label>
               <div className="border border-outline-variant/30 rounded-lg overflow-hidden bg-surface-container-lowest">
-                {/* Toolbar */}
                 <div className="flex gap-2 p-2 border-b border-outline-variant/30 bg-surface-container-low">
                   {['format_bold', 'format_italic', 'format_list_bulleted', 'link'].map(icon => (
-                    <button key={icon} type="button" className="p-1 hover:bg-surface-container-highest rounded">
+                    <button key={icon} type="button" onClick={() => handleFormatMarkdown(icon, false)} className="p-1 hover:bg-surface-container-highest rounded transition-colors">
                       <span className="material-symbols-outlined text-sm">{icon}</span>
                     </button>
                   ))}

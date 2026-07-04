@@ -5,6 +5,8 @@ import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Header from '@/components/Header';
 import ImageCropper from '@/components/ImageCropper';
+import ReactMarkdown from 'react-markdown';
+import remarkBreaks from 'remark-breaks';
 
 export default function ProjectDetail() {
   const { id } = useParams();
@@ -140,6 +142,47 @@ export default function ProjectDetail() {
     };
     reader.readAsDataURL(file);
   });
+
+  const handleFormatMarkdown = (icon, isEditMode = true) => {
+    const textareaId = isEditMode ? 'edit-overview' : 'project-overview';
+    const textState = isEditMode ? editOverview : '';
+    const setTextState = isEditMode ? setEditOverview : () => {};
+    const textarea = document.getElementById(textareaId);
+    if (!textarea) return;
+
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const selected = textState.slice(start, end);
+
+    let format = '';
+    let selectionOffset = 0;
+    
+    if (icon === 'format_bold') {
+      format = `**${selected || 'bold'}**`;
+      selectionOffset = 2;
+    } else if (icon === 'format_italic') {
+      format = `*${selected || 'italic'}*`;
+      selectionOffset = 1;
+    } else if (icon === 'format_list_bulleted') {
+      format = `\n- ${selected || 'item'}`;
+      selectionOffset = 3;
+    } else if (icon === 'link') {
+      const url = prompt('Enter URL:', 'https://');
+      if (!url) return;
+      format = `[${selected || 'link text'}](${url})`;
+      selectionOffset = 1;
+    }
+
+    const newText = textState.slice(0, start) + format + textState.slice(end);
+    setTextState(newText);
+    
+    setTimeout(() => {
+      textarea.focus();
+      const newCursorPos = start + selectionOffset;
+      const selectLength = selected ? selected.length : (icon === 'link' ? 9 : (icon === 'format_list_bulleted' ? 4 : (icon === 'format_italic' ? 6 : 4)));
+      textarea.setSelectionRange(newCursorPos, newCursorPos + selectLength);
+    }, 10);
+  };
 
   const handleEditCoverChange = async (e) => {
     if (e.target.files?.[0]) {
@@ -348,15 +391,24 @@ export default function ProjectDetail() {
                 <label className="text-label-sm font-label-sm text-on-surface uppercase tracking-wider" htmlFor="edit-overview">
                   Project Overview <span className="text-error">*</span>
                 </label>
-                <textarea
-                  className="w-full px-4 py-3 bg-surface-container-lowest border border-outline-variant/30 rounded-lg text-body-md transition-all"
-                  id="edit-overview"
-                  placeholder="Describe the problem, your solution, and the key features..."
-                  rows="6"
-                  required
-                  value={editOverview}
-                  onChange={e => setEditOverview(e.target.value)}
-                />
+                <div className="border border-outline-variant/30 rounded-lg overflow-hidden bg-surface-container-lowest">
+                  <div className="flex gap-2 p-2 border-b border-outline-variant/30 bg-surface-container-low">
+                    {['format_bold', 'format_italic', 'format_list_bulleted', 'link'].map(icon => (
+                      <button key={icon} type="button" onClick={() => handleFormatMarkdown(icon, true)} className="p-1 hover:bg-surface-container-highest rounded transition-colors">
+                        <span className="material-symbols-outlined text-sm">{icon}</span>
+                      </button>
+                    ))}
+                  </div>
+                  <textarea
+                    className="w-full px-4 py-3 border-none focus:ring-0 text-body-md"
+                    id="edit-overview"
+                    placeholder="Describe the problem, your solution, and the key features..."
+                    rows="6"
+                    required
+                    value={editOverview}
+                    onChange={e => setEditOverview(e.target.value)}
+                  />
+                </div>
               </div>
 
               {/* Tech Stack & Tools */}
@@ -678,10 +730,21 @@ export default function ProjectDetail() {
             {/* Project Overview glass card */}
             <div className="p-8 glass-card rounded-3xl">
               <h3 className="text-headline-md font-headline-md mb-4">Project Overview</h3>
-              <div className="prose prose-slate max-w-none text-body-md text-on-surface-variant space-y-4">
-                {project.description.split('\n').map((para, i) => (
-                  <p key={i}>{para}</p>
-                ))}
+              <div className="text-body-md text-on-surface-variant markdown-content">
+                <ReactMarkdown
+                  remarkPlugins={[remarkBreaks]}
+                  components={{
+                    ul: ({node, ...props}) => <ul className="list-disc pl-5 mb-4 space-y-1" {...props} />,
+                    ol: ({node, ...props}) => <ol className="list-decimal pl-5 mb-4 space-y-1" {...props} />,
+                    li: ({node, ...props}) => <li className="text-on-surface-variant" {...props} />,
+                    a: ({node, ...props}) => <a className="text-secondary hover:underline font-semibold" target="_blank" rel="noopener noreferrer" {...props} />,
+                    p: ({node, ...props}) => <p className="mb-4" {...props} />,
+                    strong: ({node, ...props}) => <strong className="font-bold text-on-surface" {...props} />,
+                    em: ({node, ...props}) => <em className="italic" {...props} />
+                  }}
+                >
+                  {project.description}
+                </ReactMarkdown>
               </div>
             </div>
 
