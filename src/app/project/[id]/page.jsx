@@ -15,6 +15,7 @@ export default function ProjectDetail() {
   const [isLiking, setIsLiking] = useState(false);
   const [commentToDelete, setCommentToDelete] = useState(null);
   const [deletingComment, setDeletingComment] = useState(false);
+  const [isPostingComment, setIsPostingComment] = useState(false);
 
   // Edit state
   const [isEditing, setIsEditing] = useState(false);
@@ -63,14 +64,19 @@ export default function ProjectDetail() {
 
   const handleComment = async (e) => {
     e.preventDefault();
-    if (!commentText.trim() || !user) return;
-    await fetch(`/api/projects/${id}/comments`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text: commentText }),
-    });
-    setCommentText('');
-    await refetch();
+    if (!commentText.trim() || !user || isPostingComment) return;
+    setIsPostingComment(true);
+    try {
+      await fetch(`/api/projects/${id}/comments`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: commentText }),
+      });
+      setCommentText('');
+      await refetch();
+    } finally {
+      setIsPostingComment(false);
+    }
   };
 
   const handleDeleteComment = async () => {
@@ -766,8 +772,9 @@ export default function ProjectDetail() {
                   required
                 />
                 <div className="text-right mt-3">
-                  <button type="submit" className="px-6 py-2.5 bg-primary text-on-primary text-label-md font-label-md font-semibold rounded-xl hover:opacity-90 transition-all">
-                    Post Comment
+                  <button type="submit" disabled={isPostingComment} className="px-6 py-2.5 bg-primary text-on-primary text-label-md font-label-md font-semibold rounded-xl hover:opacity-90 transition-all disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center ml-auto gap-2">
+                    {isPostingComment && <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />}
+                    {isPostingComment ? 'Posting...' : 'Post Comment'}
                   </button>
                 </div>
               </form>
