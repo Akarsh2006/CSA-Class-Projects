@@ -636,9 +636,6 @@ export default function ProjectDetail() {
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
             <div className="absolute bottom-0 left-0 p-10 w-full">
               <div className="flex items-center gap-2 mb-4">
-                <span className="bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-white text-label-sm font-label-sm">
-                  {new Date(project.createdAt).getFullYear()}
-                </span>
                 {project.category && (
                   <span className="bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-white text-label-sm font-label-sm">
                     {project.category}
