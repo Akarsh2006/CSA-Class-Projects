@@ -572,11 +572,17 @@ export default function ProjectDetail() {
 
       <main className="pt-24 pb-stack-xl px-margin-x max-w-container-max mx-auto">
 
-        {/* === Owner Action Bar === */}
-        {isOwner && (
-          <div className="flex justify-end gap-3 mb-6 animate-in fade-in slide-in-from-top-2 duration-500">
-            <button
-              onClick={startEditing}
+        {/* === Top Action Bar === */}
+        <div className="flex justify-between items-center mb-6 animate-in fade-in slide-in-from-top-2 duration-500">
+          <Link href="/" className="inline-flex items-center gap-2 px-4 py-2 bg-surface-container-low text-on-surface-variant hover:text-primary hover:bg-surface-container rounded-lg font-label-md font-semibold transition-all">
+            <span className="material-symbols-outlined text-[18px]">arrow_back</span>
+            Back
+          </Link>
+
+          {isOwner && (
+            <div className="flex gap-3">
+              <button
+                onClick={startEditing}
               className="flex items-center gap-1.5 px-4 py-2 bg-surface-container-high text-on-surface rounded-lg text-label-md font-label-md font-semibold hover:bg-surface-container transition-all border border-outline-variant/30 shadow-sm"
             >
               <span className="material-symbols-outlined text-[18px]">edit</span>
@@ -589,8 +595,9 @@ export default function ProjectDetail() {
               <span className="material-symbols-outlined text-[18px]">delete</span>
               Delete
             </button>
-          </div>
-        )}
+            </div>
+          )}
+        </div>
 
         {/* === HERO: 12-col grid === */}
         <section className="grid grid-cols-1 lg:grid-cols-12 gap-gutter mb-stack-xl animate-in fade-in slide-in-from-bottom-4 duration-700">

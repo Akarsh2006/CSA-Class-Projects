@@ -161,6 +161,22 @@ export default function Dashboard() {
       <Header />
 
       <main className="pt-32 pb-stack-xl px-margin-x max-w-[800px] mx-auto">
+        {/* Back Button */}
+        <div className="mb-6 animate-in fade-in slide-in-from-top-2 duration-500">
+          <button
+            type="button"
+            onClick={() => {
+              if (window.confirm("Are you sure you want to go back? Any unsaved data will be lost.")) {
+                router.push('/');
+              }
+            }}
+            className="inline-flex items-center gap-2 px-4 py-2 bg-surface-container-low text-on-surface-variant hover:text-primary hover:bg-surface-container rounded-lg font-label-md font-semibold transition-all"
+          >
+            <span className="material-symbols-outlined text-[18px]">arrow_back</span>
+            Back
+          </button>
+        </div>
+
         {/* Page Title */}
         <div className="mb-stack-lg text-center">
           <h1 className="font-headline-lg text-headline-lg text-primary mb-2">
