@@ -786,7 +786,7 @@ export default function ProjectDetail() {
               </div>
             )}
 
-            <div className="space-y-6">
+            <div className="space-y-6 max-h-[600px] overflow-y-auto pr-4">
               {project.comments?.length ? project.comments.map((c, i) => (
                 <div key={i} className="flex gap-4 pb-6 border-b border-surface-container-high last:border-0">
                   <div className="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center font-headline-md font-bold flex-shrink-0">
