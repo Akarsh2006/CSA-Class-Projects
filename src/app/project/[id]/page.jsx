@@ -752,9 +752,6 @@ export default function ProjectDetail() {
               <p className="text-body-md font-body-md text-on-surface-variant">© 2024-28 CS-A. All rights reserved.</p>
             </div>
             <div className="flex flex-wrap justify-center gap-stack-lg" />
-            <div className="flex items-center gap-stack-md">
-              <div className="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center hover:bg-secondary hover:text-white transition-all cursor-pointer" />
-            </div>
           </div>
         </div>
       </footer>
