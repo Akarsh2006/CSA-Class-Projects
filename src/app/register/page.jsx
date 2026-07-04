@@ -236,7 +236,7 @@ export default function Register() {
     {/* OTP Modal */}
     {showOtpModal && (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-surface-container-highest/80 backdrop-blur-sm p-4">
-        <div className="bg-surface-container-lowest rounded-3xl p-stack-xl max-w-sm w-full shadow-2xl border border-primary/10 relative text-center">
+        <div className="bg-surface-container-lowest rounded-3xl p-stack-xl max-w-md w-full shadow-2xl border border-primary/10 relative text-center">
           <button 
             onClick={() => setShowOtpModal(false)}
             className="absolute top-4 right-4 text-on-surface-variant hover:text-on-surface transition-colors"
@@ -263,7 +263,7 @@ export default function Register() {
                 value={digit}
                 onChange={(e) => handleOtpChange(index, e.target.value)}
                 onKeyDown={(e) => handleOtpKeyDown(index, e)}
-                className="w-12 h-14 text-center font-headline-md text-headline-md bg-surface border border-outline-variant rounded-xl focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-on-surface"
+                className="w-10 sm:w-12 h-12 sm:h-14 text-center font-headline-md text-headline-md bg-surface border border-outline-variant rounded-xl focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-on-surface"
               />
             ))}
           </div>
