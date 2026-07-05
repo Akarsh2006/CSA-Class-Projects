@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Header from '@/components/Header';
 import ProjectCard from '@/components/ProjectCard';
+import DotField from '@/components/DotField';
 
 export default function Home() {
   const [projects, setProjects] = useState([]);
@@ -57,9 +58,22 @@ export default function Home() {
 
       <main className="pt-20">
         {/* Hero Section */}
-        <section className="hero-gradient pt-stack-xl pb-stack-lg px-margin-x">
-          <div className="max-w-container-max mx-auto text-center space-y-stack-md">
-            <h1 className="text-display font-display tracking-tight text-on-surface mb-stack-sm">
+        <section className="relative overflow-hidden pt-stack-xl pb-stack-lg px-margin-x min-h-[450px] flex items-center justify-center">
+          <div className="absolute inset-0 z-0">
+            <DotField
+              dotRadius={1.5}
+              dotSpacing={14}
+              bulgeStrength={67}
+              glowRadius={150}
+              sparkle={true}
+              waveAmplitude={0}
+              gradientFrom="rgba(0, 0, 0, 0.6)"
+              gradientTo="rgba(0, 0, 0, 0.45)"
+              glowColor="rgba(0, 0, 0, 0.04)"
+            />
+          </div>
+          <div className="relative z-10 w-full max-w-container-max mx-auto text-center space-y-stack-md">
+            <h1 className="text-display font-display tracking-tight text-on-surface mb-stack-sm pointer-events-none">
               2024-28
               <div>
                 &nbsp;<span className="text-secondary">CS-A</span>
