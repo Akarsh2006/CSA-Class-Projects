@@ -75,11 +75,9 @@ export default function Login() {
 
             {/* Password */}
             <div className="space-y-1">
-              <div className="flex justify-between items-center">
-                <label className="font-label-sm text-label-sm text-on-surface-variant block ml-1" htmlFor="password">
-                  PASSWORD
-                </label>
-              </div>
+              <label className="font-label-sm text-label-sm text-on-surface-variant block ml-1" htmlFor="password">
+                PASSWORD
+              </label>
               <div className="relative">
                 <input
                   className="w-full px-4 py-3 rounded-xl border border-outline-variant bg-surface-bright font-body-md text-on-surface input-academic transition-all"
@@ -94,6 +92,11 @@ export default function Login() {
                 >
                   <span className="material-symbols-outlined text-[20px]">{showPw ? 'visibility_off' : 'visibility'}</span>
                 </button>
+              </div>
+              <div className="flex justify-end mt-1">
+                <Link href="/forgot-password" className="font-label-sm text-label-sm text-primary hover:underline transition-all mr-1">
+                  Forgot Password?
+                </Link>
               </div>
             </div>
 
