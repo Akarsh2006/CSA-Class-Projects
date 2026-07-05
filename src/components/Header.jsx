@@ -4,6 +4,8 @@ import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
+import Logo from '@/components/Logo';
+
 export default function Header() {
   const [user, setUser] = useState(null);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
@@ -46,7 +48,8 @@ export default function Header() {
       <div className="flex justify-between items-center h-full px-margin-x max-w-container-max mx-auto gap-stack-lg">
         {/* Left: Logo + search */}
         <div className="flex items-center gap-stack-lg flex-1">
-          <Link href="/" className="text-headline-md font-headline-md font-bold tracking-tight text-primary whitespace-nowrap">
+          <Link href="/" className="flex items-center gap-2 text-headline-md font-headline-md font-bold tracking-tight text-primary whitespace-nowrap">
+            <Logo className="text-primary" />
             BuildFolio
           </Link>
         </div>

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Logo from '@/components/Logo';
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState('');
@@ -40,9 +41,14 @@ export default function ForgotPassword() {
     <div className="bg-surface-container-low min-h-screen flex flex-col font-body-md text-on-surface selection:bg-primary/10 selection:text-primary">
 
       {/* Header */}
-      <header className="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-margin-x h-20 max-w-container-max mx-auto bg-surface/80 backdrop-blur-md transition-all duration-300">
-        <Link href="/" className="font-headline-md text-headline-md font-bold text-primary">BuildFolio</Link>
-        <nav className="hidden md:flex items-center space-x-gutter" />
+      <header className="fixed top-0 left-0 w-full z-50 bg-surface/80 backdrop-blur-md transition-all duration-300 h-20 border-b border-surface-container-high">
+        <div className="flex justify-between items-center h-full px-margin-x max-w-container-max mx-auto">
+          <Link href="/" className="flex items-center gap-2 font-headline-md text-headline-md font-bold text-primary">
+            <Logo className="text-primary" />
+            BuildFolio
+          </Link>
+          <nav className="hidden md:flex items-center space-x-gutter" />
+        </div>
       </header>
 
       {/* Main */}
