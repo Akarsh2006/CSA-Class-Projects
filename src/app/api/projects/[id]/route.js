@@ -33,7 +33,7 @@ export async function PUT(request, { params }) {
     }
 
     const updates = await request.json();
-    const allowed = ['title', 'description', 'impact', 'coverImage', 'screenshots', 'category', 'techStack', 'contributors', 'demoUrl', 'githubUrl', 'teamName'];
+    const allowed = ['title', 'description', 'impact', 'coverImage', 'screenshots', 'category', 'techStack', 'contributors', 'demoUrl', 'youtubeUrl', 'githubUrl', 'teamName'];
     const filtered = {};
     for (const key of allowed) {
       if (updates[key] !== undefined) filtered[key] = updates[key];

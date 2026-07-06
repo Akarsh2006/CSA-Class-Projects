@@ -38,7 +38,7 @@ export async function POST(request) {
 
     const {
       title, description, impact, coverImage, screenshots,
-      category, techStack, contributors, demoUrl, githubUrl, teamName
+      category, techStack, contributors, demoUrl, youtubeUrl, githubUrl, teamName
     } = await request.json();
 
     if (!title || !description || !impact || !techStack || techStack.length === 0) {
@@ -54,6 +54,7 @@ export async function POST(request) {
       techStack,
       contributors: contributors || [],
       demoUrl: demoUrl || '',
+      youtubeUrl: youtubeUrl || '',
       githubUrl: githubUrl || '',
       userId: user.userId,
       studentName: user.name,

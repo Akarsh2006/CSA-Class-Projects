@@ -8,6 +8,13 @@ import ImageCropper from '@/components/ImageCropper';
 import ReactMarkdown from 'react-markdown';
 import remarkBreaks from 'remark-breaks';
 
+const getYoutubeVideoId = (url) => {
+  if (!url) return null;
+  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=|shorts\/)([^#&?]*).*/;
+  const match = url.match(regExp);
+  return (match && match[2].length === 11) ? match[2] : null;
+};
+
 export default function ProjectDetail() {
   const { id } = useParams();
   const router = useRouter();
@@ -32,6 +39,7 @@ export default function ProjectDetail() {
   const [editOverview, setEditOverview] = useState('');
   const [editImpact, setEditImpact] = useState('');
   const [editDemoUrl, setEditDemoUrl] = useState('');
+  const [editYoutubeUrl, setEditYoutubeUrl] = useState('');
   const [editGithubUrl, setEditGithubUrl] = useState('');
   const [editCoverImage, setEditCoverImage] = useState(null);
   const [editGalleryImages, setEditGalleryImages] = useState([]);
@@ -110,6 +118,7 @@ export default function ProjectDetail() {
     setEditOverview(project.description || '');
     setEditImpact(project.impact || '');
     setEditDemoUrl(project.demoUrl || '');
+    setEditYoutubeUrl(project.youtubeUrl || '');
     setEditGithubUrl(project.githubUrl || '');
     setEditCoverImage(project.coverImage || null);
     setEditGalleryImages(project.screenshots || []);
@@ -228,6 +237,7 @@ export default function ProjectDetail() {
         description: editOverview,
         impact: editImpact,
         demoUrl: formatUrl(editDemoUrl),
+        youtubeUrl: formatUrl(editYoutubeUrl),
         githubUrl: formatUrl(editGithubUrl),
         coverImage: editCoverImage,
         screenshots: editGalleryImages,
@@ -485,12 +495,19 @@ export default function ProjectDetail() {
               </div>
 
               {/* Links */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="space-y-2">
                   <label className="text-label-sm font-label-sm text-on-surface uppercase tracking-wider" htmlFor="edit-demo-url">Website URL</label>
                   <div className="relative">
                     <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">language</span>
                     <input className="w-full pl-10 pr-4 py-3 bg-surface-container-lowest border border-outline-variant/30 rounded-lg text-body-md transition-all" id="edit-demo-url" type="text" placeholder="https://..." value={editDemoUrl} onChange={e => setEditDemoUrl(e.target.value)} />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-label-sm font-label-sm text-on-surface uppercase tracking-wider" htmlFor="edit-youtube-url">YouTube Video URL</label>
+                  <div className="relative">
+                    <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">smart_display</span>
+                    <input className="w-full pl-10 pr-4 py-3 bg-surface-container-lowest border border-outline-variant/30 rounded-lg text-body-md transition-all" id="edit-youtube-url" type="text" placeholder="youtube.com/watch?v=..." value={editYoutubeUrl} onChange={e => setEditYoutubeUrl(e.target.value)} />
                   </div>
                 </div>
                 <div className="space-y-2">
@@ -773,15 +790,29 @@ export default function ProjectDetail() {
         </section>
 
         {/* === PROJECT IMPACT === */}
-        {project.impact && (
+        {(project.impact || project.youtubeUrl) && (
           <section className="mb-stack-xl">
             <div className="max-w-container-max mx-auto space-y-stack-lg">
-              <div className="space-y-stack-md text-left">
-                <h2 className="text-headline-lg font-headline-lg">Project Impact</h2>
-                <div className="prose prose-slate max-w-none text-body-lg text-on-surface-variant">
-                  <p>{project.impact}</p>
+              {project.impact && (
+                <div className="space-y-stack-md text-left">
+                  <h2 className="text-headline-lg font-headline-lg">Project Impact</h2>
+                  <div className="prose prose-slate max-w-none text-body-lg text-on-surface-variant">
+                    <p>{project.impact}</p>
+                  </div>
                 </div>
-              </div>
+              )}
+              {project.youtubeUrl && getYoutubeVideoId(project.youtubeUrl) && (
+                <div className="w-full max-w-2xl aspect-video rounded-xl overflow-hidden shadow-lg border border-outline-variant/30 mt-6 text-left">
+                  <iframe
+                    className="w-full h-full"
+                    src={`https://www.youtube.com/embed/${getYoutubeVideoId(project.youtubeUrl)}`}
+                    title="YouTube video player"
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  ></iframe>
+                </div>
+              )}
             </div>
           </section>
         )}

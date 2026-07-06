@@ -21,6 +21,7 @@ export default function Dashboard() {
   const [overview, setOverview] = useState('');
   const [impact, setImpact] = useState('');
   const [demoUrl, setDemoUrl] = useState('');
+  const [youtubeUrl, setYoutubeUrl] = useState('');
   const [githubUrl, setGithubUrl] = useState('');
   const [coverImage, setCoverImage] = useState(null);
   const [galleryImages, setGalleryImages] = useState([]);
@@ -102,7 +103,7 @@ export default function Dashboard() {
   };
 
   const resetForm = () => {
-    setTitle(''); setTeamName(''); setOverview(''); setImpact(''); setDemoUrl(''); setGithubUrl('');
+    setTitle(''); setTeamName(''); setOverview(''); setImpact(''); setDemoUrl(''); setYoutubeUrl(''); setGithubUrl('');
     setCoverImage(null); setGalleryImages([]); setTechTags([]); setTagInput('');
     setContributors([{ name: '', role: '' }]); setCategory('Web Development');
     setIsEditing(false); setEditId(null);
@@ -120,7 +121,7 @@ export default function Dashboard() {
       const formatUrl = (u) => (u && !/^https?:\/\//i.test(u)) ? `https://${u}` : u;
       const payload = {
         title, teamName, description: overview, impact, 
-        demoUrl: formatUrl(demoUrl), githubUrl: formatUrl(githubUrl),
+        demoUrl: formatUrl(demoUrl), youtubeUrl: formatUrl(youtubeUrl), githubUrl: formatUrl(githubUrl),
         coverImage, screenshots: galleryImages, techStack: techTags,
         contributors: contributors.filter(c => c.name.trim()), category,
       };
@@ -178,7 +179,7 @@ export default function Dashboard() {
     if (!res.ok) return;
     const data = await res.json();
     setTitle(data.title); setTeamName(data.teamName || ''); setOverview(data.description || ''); setImpact(data.impact || '');
-    setDemoUrl(data.demoUrl || ''); setGithubUrl(data.githubUrl || '');
+    setDemoUrl(data.demoUrl || ''); setYoutubeUrl(data.youtubeUrl || ''); setGithubUrl(data.githubUrl || '');
     setCoverImage(data.coverImage); setGalleryImages(data.screenshots || []);
     setTechTags(data.techStack || []); setCategory(data.category || 'Web Development');
     setContributors(data.contributors?.length ? data.contributors : [{ name: '', role: '' }]);
@@ -422,12 +423,19 @@ export default function Dashboard() {
             </div>
 
             {/* Links */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="space-y-2">
                 <label className="text-label-sm font-label-sm text-on-surface uppercase tracking-wider" htmlFor="demo-url">Website URL</label>
                 <div className="relative">
                   <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">language</span>
                   <input className="w-full pl-10 pr-4 py-3 bg-surface-container-lowest border border-outline-variant/30 rounded-lg text-body-md transition-all" id="demo-url" type="text" placeholder="https://..." value={demoUrl} onChange={e => setDemoUrl(e.target.value)} />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <label className="text-label-sm font-label-sm text-on-surface uppercase tracking-wider" htmlFor="youtube-url">YouTube Video URL</label>
+                <div className="relative">
+                  <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">smart_display</span>
+                  <input className="w-full pl-10 pr-4 py-3 bg-surface-container-lowest border border-outline-variant/30 rounded-lg text-body-md transition-all" id="youtube-url" type="text" placeholder="youtube.com/watch?v=..." value={youtubeUrl} onChange={e => setYoutubeUrl(e.target.value)} />
                 </div>
               </div>
               <div className="space-y-2">

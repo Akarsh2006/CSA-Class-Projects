@@ -25,6 +25,7 @@ const ProjectSchema = new mongoose.Schema({
   techStack: { type: [String], default: [] },
   contributors: { type: [ContributorSchema], default: [] },
   demoUrl: { type: String, default: '' },
+  youtubeUrl: { type: String, default: '' },
   githubUrl: { type: String, default: '' },
   likes: { type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }], default: [] },
   comments: { type: [CommentSchema], default: [] },
