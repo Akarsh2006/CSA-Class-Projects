@@ -487,10 +487,10 @@ export default function ProjectDetail() {
               {/* Links */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <label className="text-label-sm font-label-sm text-on-surface uppercase tracking-wider" htmlFor="edit-demo-url">Demo Video URL</label>
+                  <label className="text-label-sm font-label-sm text-on-surface uppercase tracking-wider" htmlFor="edit-demo-url">Website URL</label>
                   <div className="relative">
-                    <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">videocam</span>
-                    <input className="w-full pl-10 pr-4 py-3 bg-surface-container-lowest border border-outline-variant/30 rounded-lg text-body-md transition-all" id="edit-demo-url" type="text" placeholder="youtube.com/..." value={editDemoUrl} onChange={e => setEditDemoUrl(e.target.value)} />
+                    <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">language</span>
+                    <input className="w-full pl-10 pr-4 py-3 bg-surface-container-lowest border border-outline-variant/30 rounded-lg text-body-md transition-all" id="edit-demo-url" type="text" placeholder="https://..." value={editDemoUrl} onChange={e => setEditDemoUrl(e.target.value)} />
                   </div>
                 </div>
                 <div className="space-y-2">
@@ -755,8 +755,8 @@ export default function ProjectDetail() {
                   href={project.demoUrl} target="_blank" rel="noopener noreferrer"
                   className="flex-1 flex items-center justify-center gap-2 px-8 py-4 bg-primary text-on-primary rounded-xl font-bold hover:opacity-90 transition-all"
                 >
-                  <span className="material-symbols-outlined">launch</span>
-                  View Live Demo
+                  <span className="material-symbols-outlined">language</span>
+                  Website
                 </a>
               )}
               {project.githubUrl && (

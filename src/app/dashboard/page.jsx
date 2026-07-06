@@ -424,10 +424,10 @@ export default function Dashboard() {
             {/* Links */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <label className="text-label-sm font-label-sm text-on-surface uppercase tracking-wider" htmlFor="demo-url">Demo Video URL</label>
+                <label className="text-label-sm font-label-sm text-on-surface uppercase tracking-wider" htmlFor="demo-url">Website URL</label>
                 <div className="relative">
-                  <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">videocam</span>
-                  <input className="w-full pl-10 pr-4 py-3 bg-surface-container-lowest border border-outline-variant/30 rounded-lg text-body-md transition-all" id="demo-url" type="text" placeholder="youtube.com/..." value={demoUrl} onChange={e => setDemoUrl(e.target.value)} />
+                  <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">language</span>
+                  <input className="w-full pl-10 pr-4 py-3 bg-surface-container-lowest border border-outline-variant/30 rounded-lg text-body-md transition-all" id="demo-url" type="text" placeholder="https://..." value={demoUrl} onChange={e => setDemoUrl(e.target.value)} />
                 </div>
               </div>
               <div className="space-y-2">
