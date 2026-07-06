@@ -59,7 +59,7 @@ export default function Home() {
       <main className="pt-20">
         {/* Hero Section */}
         <section className="relative pt-stack-xl pb-stack-lg px-margin-x min-h-[450px] flex items-center justify-center">
-          <div className="absolute inset-0 z-0 overflow-hidden">
+          <div className="absolute inset-0 z-0 overflow-hidden" style={{ maskImage: 'linear-gradient(to bottom, white 60%, transparent 100%)', WebkitMaskImage: 'linear-gradient(to bottom, white 60%, transparent 100%)' }}>
             <DotField
               dotRadius={1.5}
               dotSpacing={14}
