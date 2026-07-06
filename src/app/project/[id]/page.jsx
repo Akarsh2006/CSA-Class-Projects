@@ -666,7 +666,7 @@ export default function ProjectDetail() {
       <main className="pt-24 pb-stack-xl px-margin-x max-w-container-max mx-auto">
 
         {/* === Top Action Bar === */}
-        <div className="flex justify-between items-center mb-6 animate-in fade-in slide-in-from-top-2 duration-500">
+        <div className="flex flex-col sm:flex-row gap-4 sm:justify-between items-start sm:items-center mb-6 animate-in fade-in slide-in-from-top-2 duration-500">
           <Link href="/" className="inline-flex items-center gap-2 px-4 py-2 bg-surface-container-low text-on-surface-variant hover:text-primary hover:bg-surface-container rounded-lg font-label-md font-semibold transition-all">
             <span className="material-symbols-outlined text-[18px]">arrow_back</span>
             Back
@@ -696,7 +696,7 @@ export default function ProjectDetail() {
         <section className="grid grid-cols-1 lg:grid-cols-12 gap-gutter mb-stack-xl animate-in fade-in slide-in-from-bottom-4 duration-700">
 
           {/* Left: tall portrait card — col-span-5 */}
-          <div className="lg:col-span-5 relative group overflow-hidden rounded-[2rem] h-[600px] lg:h-[700px] shadow-2xl">
+          <div className="lg:col-span-5 relative group overflow-hidden rounded-[2rem] h-[350px] sm:h-[450px] lg:h-[550px] shadow-2xl">
             {project.coverImage ? (
               <img
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
@@ -707,7 +707,7 @@ export default function ProjectDetail() {
               <div className="w-full h-full bg-surface-container-highest flex items-center justify-center text-7xl opacity-30">📁</div>
             )}
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-            <div className="absolute bottom-0 left-0 p-10 w-full">
+            <div className="absolute bottom-0 left-0 p-6 md:p-10 w-full">
               <div className="flex items-center gap-2 mb-4">
                 {project.category && (
                   <span className="bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-white text-label-sm font-label-sm">
@@ -715,8 +715,8 @@ export default function ProjectDetail() {
                   </span>
                 )}
               </div>
-              <h1 className="text-white font-display text-headline-lg leading-tight mb-2">{project.title}</h1>
-              <div className="flex items-center justify-between pt-6 border-t border-white/20">
+              <h1 className="text-white font-display text-3xl md:text-headline-lg leading-tight mb-2">{project.title}</h1>
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-6 border-t border-white/20">
                 <span className="text-white/80 text-label-md font-label-md">By {project.teamName || project.studentName}</span>
                 <button
                   onClick={handleLike}
@@ -748,7 +748,7 @@ export default function ProjectDetail() {
             )}
 
             {/* Project Overview glass card */}
-            <div className="p-8 glass-card rounded-3xl">
+            <div className="p-5 sm:p-8 glass-card rounded-3xl">
               <h2 className="text-headline-lg font-headline-lg mb-4">Project Overview</h2>
               <div className="text-body-md text-on-surface-variant markdown-content">
                 <ReactMarkdown
@@ -823,8 +823,8 @@ export default function ProjectDetail() {
                       speed={0.5}
                       scrambleChars=".:"
                     >
-                      <h2 className="text-headline-lg font-headline-lg mb-6">Project Walkthrough</h2>
-                      <p className="text-xl lg:text-2xl text-on-surface-variant leading-relaxed">Watch the video presentation to see this      project in action . . .</p>
+                      <h2 className="text-3xl lg:text-headline-lg font-headline-lg mb-4 md:mb-6">Project Walkthrough</h2>
+                      <p className="text-lg lg:text-2xl text-on-surface-variant leading-relaxed">Watch the video presentation to see this project in action . . .</p>
                     </ScrambledText>
                   </div>
                 </div>
@@ -839,7 +839,7 @@ export default function ProjectDetail() {
             <div className="max-w-container-max mx-auto space-y-stack-lg">
               <div className="relative group">
                 {/* Nav arrows */}
-                <div className="flex items-center justify-between absolute w-full top-1/2 -translate-y-1/2 z-10 pointer-events-none px-4">
+                <div className="hidden md:flex items-center justify-between absolute w-full top-1/2 -translate-y-1/2 z-10 pointer-events-none px-4">
                   <button
                     className="pointer-events-auto w-12 h-12 bg-white/90 backdrop-blur shadow-lg rounded-full flex items-center justify-center text-primary hover:bg-primary hover:text-on-primary transition-all duration-300"
                     onClick={() => document.getElementById('overview-carousel').scrollBy({ left: -400, behavior: 'smooth' })}
@@ -891,7 +891,7 @@ export default function ProjectDetail() {
 
         {/* === COMMENTS / DISCUSSION === */}
         <section className="max-w-4xl mx-auto">
-          <div className="bg-surface-container-lowest rounded-3xl p-10 border border-primary/5">
+          <div className="bg-surface-container-lowest rounded-3xl p-5 sm:p-10 border border-primary/5">
             <h2 className="text-headline-lg font-headline-lg mb-6">
               Discussion ({project.comments?.length || 0})
             </h2>
