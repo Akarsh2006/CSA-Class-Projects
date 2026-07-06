@@ -58,8 +58,8 @@ export default function Home() {
 
       <main className="pt-20">
         {/* Hero Section */}
-        <section className="relative overflow-hidden pt-stack-xl pb-stack-lg px-margin-x min-h-[450px] flex items-center justify-center">
-          <div className="absolute inset-0 z-0">
+        <section className="relative pt-stack-xl pb-stack-lg px-margin-x min-h-[450px] flex items-center justify-center">
+          <div className="absolute inset-0 z-0 overflow-hidden">
             <DotField
               dotRadius={1.5}
               dotSpacing={14}
