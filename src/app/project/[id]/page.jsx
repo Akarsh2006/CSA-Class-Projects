@@ -747,8 +747,8 @@ export default function ProjectDetail() {
               </div>
             )}
 
-            {/* Project Overview glass card */}
-            <div className="p-5 sm:p-8 glass-card rounded-3xl">
+            {/* Project Overview */}
+            <div className="sm:p-8 sm:bg-white/70 sm:backdrop-blur-xl sm:border sm:border-black/5 rounded-3xl">
               <h2 className="text-headline-lg font-headline-lg mb-4">Project Overview</h2>
               <div className="text-body-md text-on-surface-variant markdown-content">
                 <ReactMarkdown
