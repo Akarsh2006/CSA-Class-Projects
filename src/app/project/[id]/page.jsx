@@ -7,6 +7,9 @@ import Header from '@/components/Header';
 import ImageCropper from '@/components/ImageCropper';
 import ReactMarkdown from 'react-markdown';
 import remarkBreaks from 'remark-breaks';
+import dynamic from 'next/dynamic';
+
+const ScrambledText = dynamic(() => import('@/components/ScrambledText'), { ssr: false });
 
 const getYoutubeVideoId = (url) => {
   if (!url) return null;
@@ -802,15 +805,28 @@ export default function ProjectDetail() {
                 </div>
               )}
               {project.youtubeUrl && getYoutubeVideoId(project.youtubeUrl) && (
-                <div className="w-full max-w-2xl aspect-video rounded-xl overflow-hidden shadow-lg border border-outline-variant/30 mt-6 text-left">
-                  <iframe
-                    className="w-full h-full"
-                    src={`https://www.youtube.com/embed/${getYoutubeVideoId(project.youtubeUrl)}`}
-                    title="YouTube video player"
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  ></iframe>
+                <div className="flex flex-col lg:flex-row gap-8 items-center mt-6">
+                  <div className="w-full lg:w-2/3 max-w-2xl aspect-video rounded-xl overflow-hidden shadow-lg border border-outline-variant/30 text-left">
+                    <iframe
+                      className="w-full h-full"
+                      src={`https://www.youtube.com/embed/${getYoutubeVideoId(project.youtubeUrl)}`}
+                      title="YouTube video player"
+                      frameBorder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    ></iframe>
+                  </div>
+                  <div className="w-full flex-1 text-left">
+                    <ScrambledText
+                      radius={100}
+                      duration={1.2}
+                      speed={0.5}
+                      scrambleChars=".:"
+                    >
+                      <h2 className="text-headline-lg font-headline-lg mb-6">Project Walkthrough</h2>
+                      <p className="text-xl lg:text-2xl text-on-surface-variant leading-relaxed">Watch the video presentation to see this      project in action . . .</p>
+                    </ScrambledText>
+                  </div>
                 </div>
               )}
             </div>
