@@ -30,8 +30,12 @@ const ScrambledText = ({
     charsRef.current = split.chars;
 
     charsRef.current.forEach(c => {
+      const rect = c.getBoundingClientRect();
       gsap.set(c, {
         display: 'inline-block',
+        width: rect.width,
+        height: rect.height,
+        textAlign: 'center',
         attr: { 'data-content': c.innerHTML }
       });
     });
