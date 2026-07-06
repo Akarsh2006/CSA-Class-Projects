@@ -708,22 +708,22 @@ export default function ProjectDetail() {
             )}
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
             <div className="absolute bottom-0 left-0 p-6 md:p-10 w-full">
-              <div className="flex items-center gap-2 mb-4">
+              <div className="flex items-center gap-2 mb-3 sm:mb-4">
                 {project.category && (
-                  <span className="bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-white text-label-sm font-label-sm">
+                  <span className="bg-white/20 backdrop-blur-md px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full text-white text-[10px] sm:text-label-sm font-label-sm">
                     {project.category}
                   </span>
                 )}
               </div>
-              <h1 className="text-white font-display text-3xl md:text-headline-lg leading-tight mb-2">{project.title}</h1>
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-6 border-t border-white/20">
-                <span className="text-white/80 text-label-md font-label-md">By {project.teamName || project.studentName}</span>
+              <h1 className="text-white font-display text-xl sm:text-2xl md:text-headline-lg leading-tight mb-2 line-clamp-4 md:line-clamp-none">{project.title}</h1>
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 pt-4 sm:pt-6 border-t border-white/20">
+                <span className="text-white/80 text-xs sm:text-label-md font-label-md">By {project.teamName || project.studentName}</span>
                 <button
                   onClick={handleLike}
                   disabled={isLiking}
-                  className={`px-6 py-3 rounded-xl font-bold hover:scale-105 transition-transform flex items-center gap-2 ${isLiking ? 'opacity-70' : ''} ${hasLiked ? 'bg-[#ef4444] text-white shadow-lg shadow-red-500/20' : 'bg-white text-primary'}`}
+                  className={`px-4 py-2 sm:px-6 sm:py-3 rounded-xl font-bold hover:scale-105 transition-transform flex items-center gap-1.5 sm:gap-2 text-xs sm:text-base ${isLiking ? 'opacity-70' : ''} ${hasLiked ? 'bg-[#ef4444] text-white shadow-lg shadow-red-500/20' : 'bg-white text-primary'}`}
                 >
-                  <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: hasLiked ? '"FILL" 1' : '"FILL" 0' }}>favorite</span>
+                  <span className="material-symbols-outlined text-[16px] sm:text-[20px]" style={{ fontVariationSettings: hasLiked ? '"FILL" 1' : '"FILL" 0' }}>favorite</span>
                   <span>{hasLiked ? 'Liked' : 'Like'}</span>
                   <span className="ml-1 opacity-60 font-normal">{likesCount}</span>
                 </button>
