@@ -45,27 +45,29 @@ export default function Header() {
 
   return (
     <nav data-topnav="true" className="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-md border-b border-outline-variant/30 transition-all duration-300 h-20">
-      <div className="flex justify-between items-center h-full px-margin-x max-w-container-max mx-auto gap-stack-lg">
-        {/* Left: Logo + search */}
-        <div className="flex items-center gap-stack-lg flex-1">
-          <Link href="/" className="flex items-center gap-2 text-headline-md font-headline-md font-bold tracking-tight text-primary whitespace-nowrap">
-            <Logo className="text-primary" />
-            BuildFolio
+      <div className="flex justify-between items-center h-full px-4 md:px-margin-x max-w-container-max mx-auto gap-2 md:gap-stack-lg">
+        {/* Left: Logo */}
+        <div className="flex items-center gap-2 md:gap-stack-lg flex-1">
+          <Link href="/" className="flex items-center gap-1.5 md:gap-2 text-lg sm:text-xl md:text-headline-md font-headline-md font-bold tracking-tight text-primary whitespace-nowrap">
+            <Logo className="text-primary w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8" />
+            <span>BuildFolio</span>
           </Link>
         </div>
 
-        <div className="flex items-center gap-stack-sm relative">
-          <Link href="/dashboard" className="px-5 py-2.5 bg-primary text-on-primary text-label-md font-label-md font-semibold rounded-xl hover:opacity-90 transition-all shadow-sm flex items-center gap-1">
-            <span className="material-symbols-outlined text-[18px]">add</span>Add Project
+        <div className="flex items-center gap-1 md:gap-2 relative flex-shrink-0">
+          <Link href="/dashboard" className="px-2.5 py-1.5 sm:px-5 sm:py-2.5 bg-primary text-on-primary text-xs sm:text-label-md font-label-md font-semibold rounded-xl hover:opacity-90 transition-all shadow-sm flex items-center gap-1 whitespace-nowrap">
+            <span className="material-symbols-outlined text-[16px] sm:text-[18px]">add</span>
+            <span className="hidden sm:inline">Add Project</span>
+            <span className="sm:hidden">New</span>
           </Link>
 
           {user ? (
-            <div className="relative group ml-2" ref={profileRef}>
+            <div className="relative group ml-1 sm:ml-2" ref={profileRef}>
               <button
-                className="w-10 h-10 rounded-full bg-surface-container-high text-on-surface flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-primary/20 border border-outline-variant/30 overflow-hidden"
+                className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-surface-container-high text-on-surface flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-primary/20 border border-outline-variant/30 overflow-hidden"
                 onClick={() => setShowProfileMenu(!showProfileMenu)}
               >
-                <span className="material-symbols-outlined text-on-surface-variant text-[24px]">person</span>
+                <span className="material-symbols-outlined text-on-surface-variant text-[20px] sm:text-[24px]">person</span>
               </button>
               
               {/* Dropdown Menu */}
@@ -84,14 +86,14 @@ export default function Header() {
               )}
             </div>
           ) : (
-            <>
-              <Link href="/login" className="px-5 py-2.5 text-label-md font-label-md font-semibold text-on-surface-variant hover:text-primary transition-colors hover:bg-surface-container-low rounded-xl">
+            <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
+              <Link href="/login" className="px-2 py-1.5 sm:px-5 sm:py-2.5 text-xs sm:text-label-md font-label-md font-semibold text-on-surface-variant hover:text-primary transition-colors hover:bg-surface-container-low rounded-xl whitespace-nowrap">
                 Log in
               </Link>
-              <Link href="/register" className="px-5 py-2.5 bg-surface-container-high text-on-surface text-label-md font-label-md font-semibold rounded-xl hover:bg-surface-container transition-all shadow-sm border border-outline-variant/30">
+              <Link href="/register" className="px-2.5 py-1.5 sm:px-5 sm:py-2.5 bg-surface-container-high text-on-surface text-xs sm:text-label-md font-label-md font-semibold rounded-xl hover:bg-surface-container transition-all shadow-sm border border-outline-variant/30 whitespace-nowrap">
                 Register
               </Link>
-            </>
+            </div>
           )}
         </div>
       </div>

@@ -83,7 +83,7 @@ export default function Home() {
 
             {/* Search and Filter */}
             <div className="pt-stack-md flex justify-center items-center gap-4">
-              <div className="hidden md:flex relative max-w-md w-full group">
+              <div className="flex-1 max-w-xs md:max-w-md relative group">
                 <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant group-focus-within:text-primary transition-colors">
                   search
                 </span>
