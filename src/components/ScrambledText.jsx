@@ -8,9 +8,9 @@ import './ScrambledText.css';
 gsap.registerPlugin(SplitText, ScrambleTextPlugin);
 
 const ScrambledText = ({
-  radius = 100,
-  duration = 1.2,
-  speed = 0.5,
+  radius = 50,
+  duration = 2.0,
+  speed = 0.2,
   scrambleChars = '.:',
   className = '',
   style = {},

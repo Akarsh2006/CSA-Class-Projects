@@ -749,7 +749,7 @@ export default function ProjectDetail() {
 
             {/* Project Overview glass card */}
             <div className="p-8 glass-card rounded-3xl">
-              <h3 className="text-headline-md font-headline-md mb-4">Project Overview</h3>
+              <h2 className="text-headline-lg font-headline-lg mb-4">Project Overview</h2>
               <div className="text-body-md text-on-surface-variant markdown-content">
                 <ReactMarkdown
                   remarkPlugins={[remarkBreaks]}
