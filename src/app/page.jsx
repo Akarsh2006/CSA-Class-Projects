@@ -78,19 +78,23 @@ export default function Home() {
               2024-28
               <div>
                 &nbsp;<span className="text-secondary">CS-A</span>
-                <br />Student{' '}
-                <RotatingText
-                  texts={['Projects', 'Builds', 'Works', 'Creations', 'Innovations', 'Solutions', 'Prototypes', 'Concepts', 'Experiments', 'Endeavors']}
-                  mainClassName="inline-flex overflow-hidden"
-                  staggerFrom="random"
-                  initial={{ y: "100%" }}
-                  animate={{ y: 0 }}
-                  exit={{ y: "-120%" }}
-                  staggerDuration={0.025}
-                  splitLevelClassName="overflow-hidden pb-2"
-                  transition={{ type: "spring", damping: 30, stiffness: 400 }}
-                  rotationInterval={2000}
-                />
+              </div>
+              <div className="flex justify-center w-full mt-1 sm:mt-2">
+                <div className="w-1/2 text-right">Student&nbsp;</div>
+                <div className="w-1/2 text-left">
+                  <RotatingText
+                    texts={['Projects', 'Builds', 'Works', 'Creations', 'Innovations', 'Solutions', 'Prototypes', 'Concepts', 'Experiments', 'Endeavors']}
+                    mainClassName="inline-flex overflow-hidden"
+                    staggerFrom="random"
+                    initial={{ y: "100%" }}
+                    animate={{ y: 0 }}
+                    exit={{ y: "-120%" }}
+                    staggerDuration={0.025}
+                    splitLevelClassName="overflow-hidden pb-2"
+                    transition={{ type: "spring", damping: 30, stiffness: 400 }}
+                    rotationInterval={2000}
+                  />
+                </div>
               </div>
             </h1>
 
