@@ -79,9 +79,9 @@ export default function Home() {
               <div>
                 &nbsp;<span className="text-secondary">CS-A</span>
               </div>
-              <div className="flex justify-center w-full mt-1 sm:mt-2">
-                <div className="w-1/2 text-right">Student&nbsp;</div>
-                <div className="w-1/2 text-left">
+              <div className="flex flex-col md:flex-row justify-center items-center w-full mt-1 sm:mt-2 gap-y-1 md:gap-y-0">
+                <div className="w-full md:w-1/2 text-center md:text-right">Student<span className="hidden md:inline">&nbsp;</span></div>
+                <div className="w-full md:w-1/2 text-center md:text-left">
                   <RotatingText
                     texts={['Projects', 'Builds', 'Works', 'Creations', 'Innovations', 'Solutions', 'Prototypes', 'Concepts', 'Experiments', 'Endeavors']}
                     mainClassName="inline-flex overflow-hidden"
