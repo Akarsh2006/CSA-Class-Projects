@@ -120,10 +120,9 @@ export default function ForgotPassword() {
       </main>
 
       {/* Footer */}
-      <footer className="w-full py-stack-lg px-margin-x flex flex-col md:flex-row justify-between items-center max-w-container-max mx-auto bg-surface border-t border-surface-container-high">
-        <div className="font-label-md text-label-md text-on-surface-variant mb-4 md:mb-0">© 2024-28 CS-A. All rights reserved.</div>
-        <div className="flex space-x-gutter">
-          <Link href="#" className="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-all duration-200">Contact Support</Link>
+      <footer className="w-full bg-surface border-t border-surface-container-high">
+        <div className="py-stack-lg px-margin-x max-w-container-max mx-auto flex flex-col items-center md:items-start">
+          <div className="font-label-md text-label-md text-on-surface-variant">© 2024-28 CS-A. All rights reserved.</div>
         </div>
       </footer>
     </div>
