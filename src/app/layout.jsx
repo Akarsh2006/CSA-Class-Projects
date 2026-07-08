@@ -1,4 +1,5 @@
 import './globals.css';
+import { Analytics } from '@vercel/analytics/react';
 
 export const metadata = {
   title: 'BuildFolio | 2024-28 CS-A Student Projects',
@@ -144,7 +145,10 @@ export default function RootLayout({ children }) {
           body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
         `}} />
       </head>
-      <body>{children}</body>
+      <body>
+        {children}
+        <Analytics />
+      </body>
     </html>
   );
 }
