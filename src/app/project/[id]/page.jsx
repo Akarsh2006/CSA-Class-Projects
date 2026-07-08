@@ -690,7 +690,6 @@ export default function ProjectDetail() {
                     <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                   ) : (
                     <>
-                      <span className="material-symbols-outlined text-[18px]">delete_forever</span>
                       Delete Permanently
                     </>
                   )}
