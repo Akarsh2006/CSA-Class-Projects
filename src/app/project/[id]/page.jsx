@@ -58,8 +58,8 @@ export default function ProjectDetail() {
 
   useEffect(() => {
     Promise.all([
-      fetch('/api/auth/me').then(r => r.ok ? r.json() : null),
-      fetch(`/api/projects/${id}`).then(r => r.ok ? r.json() : null),
+      fetch('/api/auth/me', { cache: 'no-store' }).then(r => r.ok ? r.json() : null),
+      fetch(`/api/projects/${id}`, { cache: 'no-store' }).then(r => r.ok ? r.json() : null),
     ]).then(([userData, projectData]) => {
       if (userData && userData.user) setUser(userData.user);
       if (projectData) setProject(projectData);
@@ -68,10 +68,23 @@ export default function ProjectDetail() {
   }, [id]);
 
   const refetch = () =>
-    fetch(`/api/projects/${id}`).then(r => r.ok ? r.json() : null).then(d => { if (d) setProject(d); });
+    fetch(`/api/projects/${id}`, { cache: 'no-store' }).then(r => r.ok ? r.json() : null).then(d => { if (d) setProject(d); });
 
   const handleLike = async () => {
     if (!user) return alert('Please log in to like projects.');
+    
+    // Optimistic update
+    const userIdStr = (user.userId || user._id)?.toString();
+    const isCurrentlyLiked = Array.isArray(project.likes) && 
+      project.likes.some(likeId => likeId?.toString() === userIdStr);
+      
+    setProject(prev => {
+      const newLikes = isCurrentlyLiked
+        ? prev.likes.filter(likeId => likeId?.toString() !== userIdStr)
+        : [...(prev.likes || []), user.userId || user._id];
+      return { ...prev, likes: newLikes };
+    });
+
     setIsLiking(true);
     await fetch(`/api/projects/${id}/like`, { method: 'POST' });
     await refetch();
@@ -82,13 +95,33 @@ export default function ProjectDetail() {
     e.preventDefault();
     if (!commentText.trim() || !user || isPostingComment) return;
     setIsPostingComment(true);
+    const textToSubmit = commentText;
+    setCommentText('');
+    
+    // Optimistic UI
+    const optimisticComment = {
+      _id: Date.now().toString(),
+      user: user.userId || user._id,
+      userName: user.name || user.username || 'You',
+      text: textToSubmit.trim(),
+      createdAt: new Date().toISOString()
+    };
+    setProject(prev => ({ ...prev, comments: [...(prev.comments || []), optimisticComment] }));
+
     try {
-      await fetch(`/api/projects/${id}/comments`, {
+      const res = await fetch(`/api/projects/${id}/comments`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text: commentText }),
+        body: JSON.stringify({ text: textToSubmit }),
       });
-      setCommentText('');
+      if (res.ok) {
+        const data = await res.json();
+        setProject(prev => ({ ...prev, comments: data.comments }));
+      } else {
+        // Rollback on failure
+        await refetch();
+      }
+    } catch {
       await refetch();
     } finally {
       setIsPostingComment(false);
@@ -98,13 +131,18 @@ export default function ProjectDetail() {
   const handleDeleteComment = async () => {
     if (!commentToDelete) return;
     setDeletingComment(true);
+    
+    // Optimistic delete
+    setProject(prev => ({ ...prev, comments: prev.comments.filter(c => c._id !== commentToDelete._id) }));
+    
     try {
       const res = await fetch(`/api/projects/${id}/comments/${commentToDelete._id}`, { method: 'DELETE' });
-      if (res.ok) {
-        await refetch();
-      } else {
+      if (!res.ok) {
         alert('Failed to delete comment.');
+        await refetch(); // rollback
       }
+    } catch {
+      await refetch();
     } finally {
       setDeletingComment(false);
       setCommentToDelete(null);
