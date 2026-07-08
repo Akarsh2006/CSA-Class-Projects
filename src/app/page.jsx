@@ -79,7 +79,7 @@ export default function Home() {
               <div>
                 &nbsp;<span className="text-secondary">CS-A</span>
               </div>
-              <div className="flex flex-col md:flex-row justify-center items-center w-full mt-1 sm:mt-2 gap-y-1 md:gap-y-0">
+              <div className="flex flex-col md:flex-row justify-center items-center md:items-baseline w-full mt-1 sm:mt-2 gap-y-1 md:gap-y-0">
                 <div className="w-full md:w-1/2 text-center md:text-right">Student<span className="hidden md:inline">&nbsp;</span></div>
                 <div className="w-full md:w-1/2 text-center md:text-left">
                   <RotatingText
