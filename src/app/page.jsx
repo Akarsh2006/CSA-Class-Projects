@@ -74,7 +74,7 @@ export default function Home() {
             />
           </div>
           <div className="relative z-10 w-full max-w-container-max mx-auto text-center space-y-stack-md">
-            <h1 className="text-display font-display tracking-tight text-on-surface mb-stack-sm pointer-events-none">
+            <h1 className="text-display-mobile md:text-display font-display tracking-tight text-on-surface mb-stack-sm pointer-events-none">
               2024-28
               <div>
                 &nbsp;<span className="text-secondary">CS-A</span>

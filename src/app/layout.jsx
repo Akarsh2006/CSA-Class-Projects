@@ -102,6 +102,7 @@ export default function RootLayout({ children }) {
                     },
                     fontSize: {
                       "display": ["64px", { lineHeight: "72px", letterSpacing: "-0.02em", fontWeight: "800" }],
+                      "display-mobile": ["clamp(2.25rem, 10vw, 4rem)", { lineHeight: "1.1", letterSpacing: "-0.02em", fontWeight: "800" }],
                       "headline-lg": ["32px", { lineHeight: "40px", fontWeight: "700" }],
                       "headline-lg-mobile": ["24px", { lineHeight: "32px", fontWeight: "700" }],
                       "headline-md": ["24px", { lineHeight: "32px", fontWeight: "600" }],
