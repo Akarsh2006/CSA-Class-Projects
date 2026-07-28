@@ -74,7 +74,7 @@ export default function Login() {
               <input
                 className="w-full px-4 py-3 rounded-xl border border-outline-variant bg-surface-bright font-body-md text-on-surface input-academic transition-all"
                 id="email" type="email" required
-                placeholder="name@university.edu"
+                placeholder="sample@gmail.com"
                 value={email} onChange={e => setEmail(e.target.value)}
               />
             </div>
@@ -136,9 +136,13 @@ export default function Login() {
       </main>
 
       {/* Footer */}
-      <footer className="w-full bg-surface border-t border-surface-container-high">
-        <div className="py-stack-lg px-margin-x max-w-container-max mx-auto flex flex-col items-center md:items-start">
-          <div className="font-label-md text-label-md text-on-surface-variant">© 2024-28 CS-A. All rights reserved.</div>
+      <footer className="bg-surface-container py-stack-lg border-t border-outline-variant/20">
+        <div className="flex flex-col md:flex-row justify-between items-center px-margin-x max-w-container-max mx-auto gap-stack-lg">
+          <div className="flex flex-col items-center md:items-start gap-stack-sm">
+            <span className="text-headline-md font-headline-md font-bold text-primary">BuildFolio</span>
+            <p className="text-body-md font-body-md text-on-surface-variant">© 2024 BuildFolio. All rights reserved.</p>
+          </div>
+          <div className="flex flex-wrap justify-center gap-stack-lg" />
         </div>
       </footer>
     </div>
