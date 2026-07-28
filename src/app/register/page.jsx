@@ -152,7 +152,7 @@ export default function Register() {
                   <input
                     className="w-full pl-10 pr-4 py-3 bg-white border border-outline-variant rounded-xl font-body-md text-body-md input-focus transition-all duration-200"
                     id="full_name" name="full_name" type="text" required
-                    placeholder="John Doe"
+                    placeholder="Richard Miles"
                     value={name} onChange={e => setName(e.target.value)}
                   />
                 </div>
@@ -168,7 +168,7 @@ export default function Register() {
                   <input
                     className="w-full pl-10 pr-4 py-3 bg-white border border-outline-variant rounded-xl font-body-md text-body-md input-focus transition-all duration-200"
                     id="email" name="email" type="email" required
-                    placeholder="student@university.edu"
+                    placeholder="sample@gmail.com"
                     value={email} onChange={e => setEmail(e.target.value)}
                   />
                 </div>
@@ -229,12 +229,14 @@ export default function Register() {
       </main>
 
       {/* Footer */}
-      <footer className="w-full py-stack-lg px-margin-x flex flex-col md:flex-row justify-between items-center max-w-container-max mx-auto bg-surface border-t border-surface-container-highest">
-        <div className="flex flex-col items-center md:items-start mb-6 md:mb-0">
-          <span className="font-label-md text-label-md text-on-surface-variant">BuildFolio</span>
-          <p className="font-body-md text-body-md text-on-surface-variant opacity-70 mt-2">© 2024-28 CS-A. All rights reserved.</p>
+      <footer className="bg-surface-container py-stack-lg border-t border-outline-variant/20">
+        <div className="flex flex-col md:flex-row justify-between items-center px-margin-x max-w-container-max mx-auto gap-stack-lg">
+          <div className="flex flex-col items-center md:items-start gap-stack-sm">
+            <span className="text-headline-md font-headline-md font-bold text-primary">BuildFolio</span>
+            <p className="text-body-md font-body-md text-on-surface-variant">© 2024 BuildFolio. All rights reserved.</p>
+          </div>
+          <div className="flex flex-wrap justify-center gap-stack-lg" />
         </div>
-        <div className="flex flex-wrap justify-center gap-6" />
       </footer>
     {/* OTP Modal */}
     {showOtpModal && (
