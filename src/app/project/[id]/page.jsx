@@ -29,6 +29,7 @@ export default function ProjectDetail() {
   const [commentToDelete, setCommentToDelete] = useState(null);
   const [deletingComment, setDeletingComment] = useState(false);
   const [isPostingComment, setIsPostingComment] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   // Edit state
   const [isEditing, setIsEditing] = useState(false);
@@ -891,17 +892,57 @@ export default function ProjectDetail() {
                   </button>
                 </div>
 
-                <div id="overview-carousel" className="flex gap-gutter overflow-x-auto no-scrollbar snap-x snap-mandatory scroll-smooth rounded-3xl">
+                <div 
+                  id="overview-carousel" 
+                  className="flex gap-gutter overflow-x-auto no-scrollbar snap-x snap-mandatory scroll-smooth rounded-3xl"
+                  onScroll={(e) => {
+                    const scrollLeft = e.target.scrollLeft;
+                    const children = e.target.children;
+                    let minDiff = Infinity;
+                    let activeIndex = 0;
+                    for (let i = 0; i < children.length; i++) {
+                      const offsetLeft = children[i].offsetLeft - e.target.offsetLeft;
+                      const diff = Math.abs(offsetLeft - scrollLeft);
+                      if (diff < minDiff) {
+                        minDiff = diff;
+                        activeIndex = i;
+                      }
+                    }
+                    setCurrentImageIndex(activeIndex);
+                  }}
+                >
                   {allImages.map((src, i) => (
-                    <div key={i} className="flex-none h-[300px] md:h-[450px] snap-start">
-                      <div className="bg-surface-container rounded-3xl p-4 md:p-6 h-full inline-flex items-center justify-center">
+                    <div key={i} className="flex-none h-[300px] md:h-[450px] snap-start w-full md:w-auto">
+                      <div className="bg-surface-container rounded-3xl p-4 md:p-6 h-full flex items-center justify-center w-full">
                         <img
-                          className="h-full w-auto object-contain rounded-2xl shadow-sm"
+                          className="h-full w-auto object-contain rounded-2xl shadow-sm mx-auto"
                           src={src}
                           alt={`Screenshot ${i + 1}`}
                         />
                       </div>
                     </div>
+                  ))}
+                </div>
+
+                {/* Dot Navigation for Mobile */}
+                <div className="flex md:hidden justify-center items-center space-x-2 mt-4">
+                  {allImages.map((_, i) => (
+                    <button
+                      key={i}
+                      onClick={() => {
+                        const carousel = document.getElementById('overview-carousel');
+                        const children = carousel.children;
+                        if (children[i]) {
+                          const scrollLeft = children[i].offsetLeft - carousel.offsetLeft;
+                          carousel.scrollTo({ left: scrollLeft, behavior: 'smooth' });
+                          setCurrentImageIndex(i);
+                        }
+                      }}
+                      className={`h-2 rounded-full transition-all duration-300 ${
+                        currentImageIndex === i ? 'w-6 bg-primary' : 'w-2 bg-outline-variant/50'
+                      }`}
+                      aria-label={`Go to slide ${i + 1}`}
+                    />
                   ))}
                 </div>
               </div>
